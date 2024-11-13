@@ -1,0 +1,14 @@
+aws:
+  s3:
+    accessKey: "accessKey"
+    secretKey: "secretKey"
+    region: "ap-northeast-2"
+    bucketName: "files"
+
+encrypt:
+  secretKey: "server-secret-key"
+
+token:
+  secretKey: "dsakljqd1idj8qwjddj12idjdsakljqd1idj8qwjddj12idjdsakljqd1idj8qwjddj12idjdsakljqd1idj8qwjddj12idjdsakljqd1idj8qwjddj12idj"
+  accessTokenExpirationMillis: 2000000
+  refreshTokenExpirationMillis: 100000000000

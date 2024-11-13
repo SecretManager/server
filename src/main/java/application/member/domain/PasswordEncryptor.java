@@ -1,6 +1,6 @@
 package application.member.domain;
 
-import application.algorithm.Bcrypt;
+import application.encrypt.domain.algorithm.Bcrypt;
 import org.springframework.stereotype.Component;
 
 @Component

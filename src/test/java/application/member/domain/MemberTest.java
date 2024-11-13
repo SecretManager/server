@@ -44,14 +44,14 @@ class MemberTest {
             // given
             Member member = new Member("user", "pss", "email@email.com");
             given(encryptor.encrypt(eq("pss")))
-                    .willReturn("encrypted");
+                    .willReturn("encryptedByte");
 
             // when
             member.signup(memberValidator, encryptor);
 
             // then
             assertThat(member.getPlainPassword()).isNull();
-            assertThat(member.getHashedPassword()).isEqualTo("encrypted");
+            assertThat(member.getHashedPassword()).isEqualTo("encryptedByte");
         }
     }
 

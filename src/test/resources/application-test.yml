@@ -13,3 +13,11 @@ spring:
 
     hibernate:
       ddl-auto: create
+
+encrypt:
+  secretKey: "server-secret-key"
+
+token:
+  secretKey: "dsakljqd1idj8qwjddj12idjdsakljqd1idj8qwjddj12idjdsakljqd1idj8qwjddj12idjdsakljqd1idj8qwjddj12idjdsakljqd1idj8qwjddj12idj"
+  accessTokenExpirationMillis: 2000000
+  refreshTokenExpirationMillis: 100000000000

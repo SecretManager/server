@@ -1,7 +1,10 @@
-package application.encryptor;
+package application.encrypt.domain;
 
+import application.common.ForbiddenException;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import javax.crypto.AEADBadTagException;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
@@ -17,10 +20,20 @@ public class Encryptor {
     private static final int AES_GCM_TAG_LENGTH = 128;
     private static final String AES_GCM_TRANSFORMATION = "AES/GCM/NoPadding";
 
-    private final Sha256SecretKeyGenerator generator;
+    public byte[] encrypt(byte[] input, SecretKey... keys) {
+        byte[] result = input;
+        for (SecretKey key : keys) {
+            if (key == null) {
+                continue;
+            }
+            result = encryptUsingSingleKey(result, key);
+        }
+        return result;
+    }
 
-    public byte[] encrypt(InputStream inputStream, String plainKey, Nonce nonce) {
-        SecretKey key = generator.generateAESKey(plainKey);
+    private byte[] encryptUsingSingleKey(byte[] bytes, SecretKey key) {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+        Nonce nonce = Nonce.generate();
         Cipher cipher = getCipher(Cipher.ENCRYPT_MODE, key, nonce);
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             outputStream.write(nonce.getBytes());
@@ -31,14 +44,29 @@ public class Encryptor {
         }
     }
 
-    public byte[] decrypt(InputStream inputStream, String plainKey) throws Exception {
-        SecretKey key = generator.generateAESKey(plainKey);
+    public byte[] decrypt(byte[] input, SecretKey... keys) {
+        byte[] result = input;
+        for (SecretKey key : keys) {
+            if (key == null) {
+                continue;
+            }
+            result = decryptUsingSingleKey(result, key);
+        }
+        return result;
+    }
+
+    private byte[] decryptUsingSingleKey(byte[] bytes, SecretKey key) {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
         // 암호화된 데이터에서 nonce(12바이트)를 분리
         Nonce nonce = Nonce.extractFromPrefix(inputStream);
         Cipher cipher = getCipher(Cipher.DECRYPT_MODE, key, nonce);
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             applyCipher(inputStream, cipher, outputStream);
             return outputStream.toByteArray();
+        } catch (AEADBadTagException e) {
+            throw new ForbiddenException("암호화 키가 올바르지 않습니다.");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

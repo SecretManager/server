@@ -1,4 +1,4 @@
-package application.encryptor;
+package application.encrypt.domain;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
