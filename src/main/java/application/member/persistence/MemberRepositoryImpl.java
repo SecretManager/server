@@ -29,4 +29,10 @@ public class MemberRepositoryImpl implements MemberRepository {
         MemberEntity entity = memberRepository.getByUsername(username);
         return mapper.toDomain(entity);
     }
+
+    @Override
+    public Member getById(Long memberId) {
+        MemberEntity entity = memberRepository.getById(memberId);
+        return mapper.toDomain(entity);
+    }
 }
