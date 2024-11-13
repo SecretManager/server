@@ -9,31 +9,18 @@ import application.member.application.command.LoginCommand;
 import application.member.application.command.SignupCommand;
 import application.member.domain.Member;
 import application.member.persistence.MemberEntity;
-import application.member.persistence.MemberEntityRepository;
-import application.support.DataClearExtension;
-import application.support.MockTestSupport;
+import application.support.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@ExtendWith(DataClearExtension.class)
-@SpringBootTest
 @DisplayName("회원 서비스 (MemberService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class MemberServiceTest extends MockTestSupport {
-
-    @Autowired
-    private MemberEntityRepository memberEntityRepository;
-
-    @Autowired
-    private MemberService memberService;
+class MemberServiceTest extends IntegrationTest {
 
     @Nested
     class 회원가입_시 {

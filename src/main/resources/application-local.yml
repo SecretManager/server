@@ -1,0 +1,9 @@
+aws:
+  s3:
+    accessKey: "accessKey"
+    secretKey: "secretKey"
+    region: "ap-northeast-2"
+    bucketName: "files"
+
+encrypt:
+  secretKey: "server-secret-key"

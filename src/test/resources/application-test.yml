@@ -13,3 +13,6 @@ spring:
 
     hibernate:
       ddl-auto: create
+
+encrypt:
+  secretKey: "server-secret-key"
