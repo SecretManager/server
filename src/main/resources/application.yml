@@ -1,1 +1,8 @@
-spring.application.name=secret-manager
+spring:
+  profiles:
+    active: local
+
+  servlet:
+    multipart:
+      max-file-size: 3GB
+      max-request-size: 3GB
