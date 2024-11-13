@@ -17,7 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,7 +45,7 @@ public class EncryptController {
             @Auth Member member,
             @ModelAttribute FileEncryptRequest request
     ) throws Exception {
-        EncryptResult encryptResult = encryptService.encryptWithNoSave(request.toCommand(member));
+        EncryptResult encryptResult = encryptService.encrypt(request.toCommand(member));
         if (request.downloadFile()) {
             String filename = encryptResult.metadata().getOriginalFileName();
             byte[] encrypt = encryptResult.encryptedByte();
@@ -52,7 +54,7 @@ public class EncryptController {
         return ResponseEntity.ok(null);
     }
 
-    @PostMapping("/decrypt-for-requested-file")
+    @PostMapping("/decrypt")
     public ResponseEntity<byte[]> decrypt(
             @ModelAttribute FileDecryptForRequestedFileRequest request
     ) throws Exception {
@@ -62,12 +64,13 @@ public class EncryptController {
         return writeFile(decryptedBytes, "decrypted_" + request.file().getOriginalFilename());
     }
 
-    @PostMapping("/decrypt")
+    @PostMapping("/decrypt/{fileId}")
     public ResponseEntity<byte[]> decrypt(
             @Auth Member member,
-            @ModelAttribute FileDecryptRequest request
+            @PathVariable("fileId") Long fileId,
+            @RequestBody FileDecryptRequest request
     ) throws Exception {
-        DecryptResult decryptResult = encryptService.decrypt(request.toCommand(member));
+        DecryptResult decryptResult = encryptService.decrypt(request.toCommand(fileId, member));
         byte[] decryptedBytes = decryptResult.decryptedByte();
         return writeFile(decryptedBytes, "decrypted_" + decryptResult.metadata().getOriginalFileName());
     }

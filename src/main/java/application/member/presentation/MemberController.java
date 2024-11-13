@@ -25,12 +25,13 @@ public class MemberController {
     private final TokenService tokenService;
 
     @PostMapping
-    public ResponseEntity<Long> signup(
+    public ResponseEntity<TokenResponse> signup(
             @RequestBody SignupRequest request
     ) {
         SignupCommand command = mapper.toCommand(request);
         Member member = memberService.signup(command);
-        return ResponseEntity.ok(member.getId());
+        TokenResponse token = tokenService.createToken(member.getId());
+        return ResponseEntity.ok(token);
     }
 
     @PostMapping("/login")
