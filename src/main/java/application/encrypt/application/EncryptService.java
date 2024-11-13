@@ -24,7 +24,7 @@ public class EncryptService {
     private final S3ApiClient s3ApiClient;
     private final ServerSecretKey serverSecretKey;
 
-    public EncryptResult encryptForUnAuthorized(FileEncryptCommand command) {
+    public EncryptResult encryptWithNoSave(FileEncryptCommand command) {
         SecretKey keyForFile = secretKeyGenerator.generateAESKey(command.plainKey());
         byte[] encrypt = encryptor.encrypt(command.bytes(), keyForFile, serverSecretKey.getSecretKey());
         FileMetadata metadata = new FileMetadata(command.fileName());
@@ -49,7 +49,7 @@ public class EncryptService {
         return new DecryptResult(metadata, decrypt);
     }
 
-    public DecryptResult decryptForUnAuthorized(byte[] encrypted, String key) {
+    public DecryptResult decryptForRequestedFile(byte[] encrypted, String key) {
         SecretKey secretKey = secretKeyGenerator.generateAESKey(key);
         byte[] decrypt = encryptor.decrypt(encrypted, serverSecretKey.getSecretKey(), secretKey);
         return new DecryptResult(null, decrypt);

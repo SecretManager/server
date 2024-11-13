@@ -47,7 +47,7 @@ class EncryptServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 미가입_사용자용_암호화() {
+    void 저장_없이_암호화() {
         // given
         String target = "target";
         String fileName = "fileName";
@@ -57,7 +57,7 @@ class EncryptServiceTest extends IntegrationTest {
 
         // when & then
         assertDoesNotThrow(() -> {
-            encryptService.encryptForUnAuthorized(command);
+            encryptService.encryptWithNoSave(command);
         });
     }
 
@@ -82,17 +82,17 @@ class EncryptServiceTest extends IntegrationTest {
     }
 
     @Test
-    void 미가입_사용자용_복호화() {
+    void 저장_없이_사용자용_복호화() {
         // given
         String target = "target";
         String fileName = "fileName";
         String key = "secret";
         byte[] bytes = target.getBytes(StandardCharsets.UTF_8);
         FileEncryptCommand command = new FileEncryptCommand(null, fileName, key, bytes);
-        EncryptResult encrypt = encryptService.encryptForUnAuthorized(command);
+        EncryptResult encrypt = encryptService.encryptWithNoSave(command);
 
         // when
-        byte[] decrypted = encryptService.decryptForUnAuthorized(encrypt.encryptedByte(), key)
+        byte[] decrypted = encryptService.decryptForRequestedFile(encrypt.encryptedByte(), key)
                 .decryptedByte();
 
         // then

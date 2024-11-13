@@ -11,9 +11,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class AuthConfig implements WebMvcConfigurer {
 
     private final AuthArgumentResolver authArgumentResolver;
+    private final OptionalAuthArgumentResolver optionalAuthArgumentResolver ;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(authArgumentResolver);
+        resolvers.add(optionalAuthArgumentResolver);
     }
 }
