@@ -1,4 +1,4 @@
-package application.encryptor;
+package application.encrypt.domain;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

@@ -1,8 +1,8 @@
-package application.service;
+package application.encrypt.application;
 
-import application.algorithm.Sha256;
-import application.encryptor.Encryptor;
-import application.encryptor.Nonce;
+import application.encrypt.algorithm.Sha256;
+import application.encrypt.domain.Encryptor;
+import application.encrypt.domain.Nonce;
 import java.io.InputStream;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

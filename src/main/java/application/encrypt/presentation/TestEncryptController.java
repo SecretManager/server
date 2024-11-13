@@ -1,7 +1,7 @@
-package application.controller;
+package application.encrypt.presentation;
 
-import application.encryptor.Encryptor;
-import application.encryptor.Nonce;
+import application.encrypt.domain.Encryptor;
+import application.encrypt.domain.Nonce;
 import java.io.ByteArrayOutputStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Slf4j
 @RestController
-public class EncryptController {
+public class TestEncryptController {
 
     private final Encryptor encryptor;
 

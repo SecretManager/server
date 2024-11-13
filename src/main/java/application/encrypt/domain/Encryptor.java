@@ -1,4 +1,4 @@
-package application.encryptor;
+package application.encrypt.domain;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
