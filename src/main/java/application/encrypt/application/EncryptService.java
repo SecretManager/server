@@ -24,21 +24,20 @@ public class EncryptService {
     private final S3ApiClient s3ApiClient;
     private final ServerSecretKey serverSecretKey;
 
-    public EncryptResult encryptWithNoSave(FileEncryptCommand command) {
+    public EncryptResult encrypt(FileEncryptCommand command) {
+        SecretKey keyForFile = secretKeyGenerator.generateAESKey(command.plainKey());
+        byte[] encrypt = encryptor.encrypt(command.bytes(), keyForFile, serverSecretKey.getSecretKey());
+        FileMetadata metadata = FileMetadata.createRandomName(command.memberId(), command.fileName());
+        s3ApiClient.uploadByteUsingStream(encrypt, metadata.getEncryptedFileName());
+        FileMetadata savedMetadata = fileMetadataRepository.save(metadata);
+        return new EncryptResult(savedMetadata, encrypt);
+    }
+
+    public EncryptResult encryptWithoutSave(FileEncryptCommand command) {
         SecretKey keyForFile = secretKeyGenerator.generateAESKey(command.plainKey());
         byte[] encrypt = encryptor.encrypt(command.bytes(), keyForFile, serverSecretKey.getSecretKey());
         FileMetadata metadata = new FileMetadata(command.fileName());
         return new EncryptResult(metadata, encrypt);
-    }
-
-    public EncryptResult encrypt(FileEncryptCommand command) {
-        Long memberId = command.memberId();
-        SecretKey keyForFile = secretKeyGenerator.generateAESKey(command.plainKey());
-        byte[] encrypt = encryptor.encrypt(command.bytes(), keyForFile, serverSecretKey.getSecretKey());
-        FileMetadata metadata = FileMetadata.createRandomName(memberId, command.fileName());
-        s3ApiClient.uploadByteUsingStream(encrypt, metadata.getEncryptedFileName());
-        FileMetadata savedMetadata = fileMetadataRepository.save(metadata);
-        return new EncryptResult(savedMetadata, encrypt);
     }
 
     public DecryptResult decrypt(FileDecryptCommand command) {

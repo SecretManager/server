@@ -57,7 +57,7 @@ class EncryptServiceTest extends IntegrationTest {
 
         // when & then
         assertDoesNotThrow(() -> {
-            encryptService.encryptWithNoSave(command);
+            encryptService.encryptWithoutSave(command);
         });
     }
 
@@ -89,7 +89,7 @@ class EncryptServiceTest extends IntegrationTest {
         String key = "secret";
         byte[] bytes = target.getBytes(StandardCharsets.UTF_8);
         FileEncryptCommand command = new FileEncryptCommand(null, fileName, key, bytes);
-        EncryptResult encrypt = encryptService.encryptWithNoSave(command);
+        EncryptResult encrypt = encryptService.encryptWithoutSave(command);
 
         // when
         byte[] decrypted = encryptService.decryptForRequestedFile(encrypt.encryptedByte(), key)

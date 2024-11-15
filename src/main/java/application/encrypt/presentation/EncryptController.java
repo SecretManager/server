@@ -30,16 +30,6 @@ public class EncryptController {
 
     private final EncryptService encryptService;
 
-    @PostMapping("/encrypt-with-no-save")
-    public ResponseEntity<byte[]> encryptWithNoSave(
-            @ModelAttribute FileEncryptWithNoSaveRequest request
-    ) throws Exception {
-        EncryptResult encryptResult = encryptService.encryptWithNoSave(request.toCommand());
-        String filename = encryptResult.metadata().getOriginalFileName();
-        byte[] encrypt = encryptResult.encryptedByte();
-        return writeFile(encrypt, "encrypted_" + filename);
-    }
-
     @PostMapping("/encrypt")
     public ResponseEntity<byte[]> encrypt(
             @Auth Member member,
@@ -52,6 +42,16 @@ public class EncryptController {
             return writeFile(encrypt, "encrypted_" + filename);
         }
         return ResponseEntity.ok(null);
+    }
+
+    @PostMapping("/encrypt-with-no-save")
+    public ResponseEntity<byte[]> encryptWithNoSave(
+            @ModelAttribute FileEncryptWithNoSaveRequest request
+    ) throws Exception {
+        EncryptResult encryptResult = encryptService.encryptWithoutSave(request.toCommand());
+        String filename = encryptResult.metadata().getOriginalFileName();
+        byte[] encrypt = encryptResult.encryptedByte();
+        return writeFile(encrypt, "encrypted_" + filename);
     }
 
     @PostMapping("/decrypt")
