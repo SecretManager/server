@@ -9,6 +9,6 @@ public record SignupCommand(
         Optional<String> email
 ) {
     public Member toMember() {
-        return new Member(username, plainPassword, email.orElse(null));
+        return Member.preSignup(username, plainPassword, email.orElse(null));
     }
 }

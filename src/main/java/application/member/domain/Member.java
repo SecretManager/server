@@ -2,6 +2,8 @@ package application.member.domain;
 
 import application.common.ApplicationException;
 import application.common.Default;
+import application.encrypt.domain.algorithm.Bcrypt;
+import application.encrypt.domain.key.MemberKey;
 import jakarta.annotation.Nullable;
 import lombok.Getter;
 
@@ -10,16 +12,23 @@ public class Member {
 
     private final Long id;
     private final String username;
-    private String plainPassword;
     private String hashedPassword;
 
     @Nullable
     private String email;
 
-    public Member(String username, String plainPassword, @Nullable String email) {
+    public static Member preSignup(String username, String plainPassword, @Nullable String email) {
+        return new Member(
+                username,
+                Bcrypt.encrypt(plainPassword),
+                email
+        );
+    }
+
+    private Member(String username, String hashedPassword, @Nullable String email) {
         this.id = null;
         this.username = username;
-        this.plainPassword = plainPassword;
+        this.hashedPassword = hashedPassword;
         this.email = email;
     }
 
@@ -31,14 +40,12 @@ public class Member {
         this.email = email;
     }
 
-    public void signup(MemberValidator validator, PasswordEncryptor encryptor) {
+    public void signup(MemberValidator validator) {
         validator.validateSignup(username);
-        this.hashedPassword = encryptor.encrypt(plainPassword);
-        this.plainPassword = null;
     }
 
-    public void login(PasswordEncryptor encryptor, String plainPassword) {
-        boolean pass = encryptor.checkPassword(plainPassword, this.hashedPassword);
+    public void login(String plainPassword) {
+        boolean pass = Bcrypt.check(plainPassword, hashedPassword);
         if (!pass) {
             throw new ApplicationException("로그인에 실패했습니다. 비밀번호를 확인해주세요.");
         }
