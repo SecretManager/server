@@ -1,6 +1,6 @@
 package application.auth.token;
 
-import application.common.UnAuthorizedException;
+import application.common.exception.UnAuthorizedException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Jwts.SIG;
 import io.jsonwebtoken.io.Decoders;

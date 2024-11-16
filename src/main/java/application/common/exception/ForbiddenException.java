@@ -1,8 +1,8 @@
-package application.common;
+package application.common.exception;
 
 public class ForbiddenException extends ApplicationException {
 
     public ForbiddenException(String message) {
-        super(message);
+        super(message, 403);
     }
 }

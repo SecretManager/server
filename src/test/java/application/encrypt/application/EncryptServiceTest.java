@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import application.common.ForbiddenException;
+import application.common.exception.ForbiddenException;
 import application.encrypt.application.command.DecryptRequestedFileCommand;
 import application.encrypt.application.command.DecryptSavedFileCommand;
 import application.encrypt.application.command.EncryptWithSaveCommand;

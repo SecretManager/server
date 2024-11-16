@@ -1,6 +1,6 @@
 package application.encrypt.persistence.key;
 
-import application.common.NotFoundException;
+import application.common.exception.NotFoundException;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

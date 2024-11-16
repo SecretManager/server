@@ -1,8 +1,8 @@
 package application.member.domain;
 
-import application.common.ApplicationException;
 import application.common.Default;
 import application.common.algorithm.Bcrypt;
+import application.common.exception.UnAuthorizedException;
 import jakarta.annotation.Nullable;
 import lombok.Getter;
 
@@ -46,7 +46,7 @@ public class Member {
     public void login(String plainPassword) {
         boolean pass = Bcrypt.check(plainPassword, hashedPassword);
         if (!pass) {
-            throw new ApplicationException("로그인에 실패했습니다. 비밀번호를 확인해주세요.");
+            throw new UnAuthorizedException("로그인에 실패했습니다. 비밀번호를 확인해주세요.");
         }
     }
 }

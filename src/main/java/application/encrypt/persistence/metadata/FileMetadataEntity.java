@@ -1,5 +1,6 @@
 package application.encrypt.persistence.metadata;
 
+import application.common.entity.RootEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "file_metadata")
-public class FileMetadataEntity {
+public class FileMetadataEntity extends RootEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

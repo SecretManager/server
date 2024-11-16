@@ -1,6 +1,6 @@
 package application.encrypt.presentation.request;
 
-import application.common.FileUtils;
+import application.common.utils.FileUtils;
 import application.encrypt.application.command.EncryptWithSaveCommand;
 import application.encrypt.application.command.FolderKeyQuery;
 import application.encrypt.domain.key.FolderKey;

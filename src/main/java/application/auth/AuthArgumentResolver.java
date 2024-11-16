@@ -1,7 +1,7 @@
 package application.auth;
 
 import application.auth.token.TokenService;
-import application.common.UnAuthorizedException;
+import application.common.exception.UnAuthorizedException;
 import application.member.domain.Member;
 import application.member.domain.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;

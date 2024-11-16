@@ -1,6 +1,6 @@
 package application.member.domain;
 
-import application.common.ApplicationException;
+import application.common.exception.ConflictException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ public class MemberValidator {
 
     public void validateSignup(String username) {
         if (memberRepository.existsByUsername(username)) {
-            throw new ApplicationException("아이디가 중복되었습니다. 다른 아이디를 사용해주세요.");
+            throw new ConflictException("아이디가 중복되었습니다. 다른 아이디를 사용해주세요.");
         }
     }
 }

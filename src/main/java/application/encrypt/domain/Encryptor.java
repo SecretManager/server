@@ -1,6 +1,6 @@
 package application.encrypt.domain;
 
-import application.common.ForbiddenException;
+import application.common.exception.ForbiddenException;
 import application.encrypt.domain.key.KeyChain;
 import application.encrypt.domain.key.SecretKeyGenerator;
 import java.io.ByteArrayInputStream;

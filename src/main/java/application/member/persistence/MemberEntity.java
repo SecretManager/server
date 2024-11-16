@@ -1,5 +1,6 @@
 package application.member.persistence;
 
+import application.common.entity.RootEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "member")
-public class MemberEntity {
+public class MemberEntity extends RootEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

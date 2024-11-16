@@ -1,4 +1,4 @@
-package application.common;
+package application.common.utils;
 
 import org.springframework.web.multipart.MultipartFile;
 

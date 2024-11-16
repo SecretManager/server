@@ -1,5 +1,6 @@
 package application.encrypt.persistence.key;
 
+import application.common.entity.RootEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "default_folder_key")
-public class DefaultFolderKeyEntity {
+public class DefaultFolderKeyEntity extends RootEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
