@@ -60,7 +60,7 @@ public class EncryptController {
     ) throws Exception {
         DecryptResult decryptResult = encryptService.decryptSavedFile(request.toCommand(fileId, member));
         byte[] decryptedBytes = decryptResult.decryptedByte();
-        return writeFile(decryptedBytes, "decrypted_" + decryptResult.metadata().getOriginalFileName());
+        return writeFile(decryptedBytes, "decrypted_" + decryptResult.metadata().getFileName());
     }
 
     @PostMapping("/decrypt")

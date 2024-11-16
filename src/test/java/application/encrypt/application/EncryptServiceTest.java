@@ -47,7 +47,7 @@ class EncryptServiceTest extends IntegrationTest {
         String fileName = "fileName";
         FolderKey folderKey = FolderKey.ofPlainKeyForEncrypt("secret", null);
         byte[] bytes = target.getBytes(StandardCharsets.UTF_8);
-        EncryptWithSaveCommand command = new EncryptWithSaveCommand(memberId, fileName, folderKey, bytes);
+        EncryptWithSaveCommand command = new EncryptWithSaveCommand(memberId, fileName, "", folderKey, bytes);
 
         // when & then
         assertDoesNotThrow(() -> {
@@ -76,7 +76,7 @@ class EncryptServiceTest extends IntegrationTest {
         String fileName = "fileName";
         FolderKey folderKey = FolderKey.ofPlainKeyForEncrypt("secret", null);
         byte[] bytes = target.getBytes(StandardCharsets.UTF_8);
-        EncryptWithSaveCommand saveCommand = new EncryptWithSaveCommand(memberId, fileName, folderKey, bytes);
+        EncryptWithSaveCommand saveCommand = new EncryptWithSaveCommand(memberId, fileName, "", folderKey, bytes);
         ArgumentCaptor<byte[]> uploadByteCapture = ArgumentCaptor.forClass(byte[].class);
         FileMetadata metadata = encryptService.encrypt(saveCommand);
         verify(s3ApiClient).uploadByteUsingStream(uploadByteCapture.capture(), anyString());
@@ -118,7 +118,7 @@ class EncryptServiceTest extends IntegrationTest {
         String fileName = "fileName";
         FolderKey folderKey = FolderKey.ofPlainKeyForEncrypt("secret", null);
         byte[] bytes = target.getBytes(StandardCharsets.UTF_8);
-        EncryptWithSaveCommand saveCommand = new EncryptWithSaveCommand(memberId, fileName, folderKey, bytes);
+        EncryptWithSaveCommand saveCommand = new EncryptWithSaveCommand(memberId, fileName, "", folderKey, bytes);
         ArgumentCaptor<byte[]> uploadByteCapture = ArgumentCaptor.forClass(byte[].class);
         FileMetadata metadata = encryptService.encrypt(saveCommand);
         verify(s3ApiClient).uploadByteUsingStream(uploadByteCapture.capture(), anyString());

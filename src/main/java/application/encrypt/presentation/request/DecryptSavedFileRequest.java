@@ -9,6 +9,10 @@ public record DecryptSavedFileRequest(
         @Nullable String folderKey
 ) {
     public DecryptSavedFileCommand toCommand(Long fileId, Member member) {
-        return new DecryptSavedFileCommand(fileId, member.getId(), FolderKey.fromPlainKeyForDecrypt(folderKey));
+        return new DecryptSavedFileCommand(
+                fileId,
+                member.getId(),
+                FolderKey.fromPlainKeyForDecrypt(folderKey)
+        );
     }
 }

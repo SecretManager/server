@@ -32,7 +32,7 @@ public class EncryptService {
         PersonalKey personalKey = personalKeyRepository.getByMemberId(command.memberId());
         KeyChain keyChain = new KeyChain(folderKey, personalKey, serverKey);
         byte[] encrypt = encryptor.encrypt(command.bytes(), keyChain);
-        FileMetadata metadata = FileMetadata.createRandomName(command.memberId(), command.fileName());
+        FileMetadata metadata = command.toFileMetadata();
         s3ApiClient.uploadByteUsingStream(encrypt, metadata.getEncryptedFileName());
         return fileMetadataRepository.save(metadata);
     }
