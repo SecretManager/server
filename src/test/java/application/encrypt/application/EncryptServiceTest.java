@@ -2,33 +2,42 @@ package application.encrypt.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 import application.common.ForbiddenException;
-import application.encrypt.application.command.FileDecryptCommand;
-import application.encrypt.application.command.FileEncryptCommand;
+import application.encrypt.application.command.DecryptRequestedFileCommand;
+import application.encrypt.application.command.DecryptSavedFileCommand;
+import application.encrypt.application.command.EncryptWithSaveCommand;
+import application.encrypt.application.command.EncryptWithoutSaveCommand;
 import application.encrypt.application.result.DecryptResult;
-import application.encrypt.application.result.EncryptResult;
+import application.encrypt.domain.FileMetadata;
+import application.encrypt.domain.key.FolderKey;
+import application.member.application.command.SignupCommand;
 import application.support.IntegrationTest;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 @DisplayName("암호화 서비스 (EncryptService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class EncryptServiceTest extends IntegrationTest {
 
-    private final Long memberId = 1L;
+    private Long memberId;
 
     @BeforeEach
     void setUp() {
-        memberEntityRepository.save(createMember(memberId));
+        memberId = memberService.signup(new SignupCommand("username", "1234", Optional.empty()))
+                .getId();
     }
 
     @Test
@@ -36,9 +45,9 @@ class EncryptServiceTest extends IntegrationTest {
         // given
         String target = "target";
         String fileName = "fileName";
-        String key = "secret";
+        FolderKey folderKey = FolderKey.ofPlainKeyForEncrypt("secret", null);
         byte[] bytes = target.getBytes(StandardCharsets.UTF_8);
-        FileEncryptCommand command = new FileEncryptCommand(memberId, fileName, key, bytes);
+        EncryptWithSaveCommand command = new EncryptWithSaveCommand(memberId, fileName, "", folderKey, bytes);
 
         // when & then
         assertDoesNotThrow(() -> {
@@ -50,31 +59,34 @@ class EncryptServiceTest extends IntegrationTest {
     void 저장_없이_암호화() {
         // given
         String target = "target";
-        String fileName = "fileName";
-        String key = "secret";
+        FolderKey folderKey = FolderKey.ofPlainKeyForEncrypt("secret", null);
         byte[] bytes = target.getBytes(StandardCharsets.UTF_8);
-        FileEncryptCommand command = new FileEncryptCommand(null, fileName, key, bytes);
+        EncryptWithoutSaveCommand command = new EncryptWithoutSaveCommand(folderKey, bytes);
 
         // when & then
         assertDoesNotThrow(() -> {
-            encryptService.encryptWithNoSave(command);
+            encryptService.encryptWithoutSave(command);
         });
     }
 
     @Test
-    void 회원용_복호화() {
+    void 저장된_파일_복호화() {
         // given
         String target = "target";
         String fileName = "fileName";
-        String key = "secret";
+        FolderKey folderKey = FolderKey.ofPlainKeyForEncrypt("secret", null);
         byte[] bytes = target.getBytes(StandardCharsets.UTF_8);
-        EncryptResult encrypt = encryptService.encrypt(new FileEncryptCommand(memberId, fileName, key, bytes));
-        FileDecryptCommand command = new FileDecryptCommand(encrypt.metadata().getId(), memberId, key);
-        given(s3ApiClient.downloadByteFile(eq(encrypt.metadata().getEncryptedFileName())))
-                .willReturn(encrypt.encryptedByte());
+        EncryptWithSaveCommand saveCommand = new EncryptWithSaveCommand(memberId, fileName, "", folderKey, bytes);
+        ArgumentCaptor<byte[]> uploadByteCapture = ArgumentCaptor.forClass(byte[].class);
+        FileMetadata metadata = encryptService.encrypt(saveCommand);
+        verify(s3ApiClient).uploadByteUsingStream(uploadByteCapture.capture(), anyString());
+
+        DecryptSavedFileCommand command = new DecryptSavedFileCommand(metadata.getId(), memberId, folderKey);
+        given(s3ApiClient.downloadByteFile(eq(metadata.getEncryptedFileName())))
+                .willReturn(uploadByteCapture.getValue());
 
         // when
-        DecryptResult decrypt = encryptService.decrypt(command);
+        DecryptResult decrypt = encryptService.decryptSavedFile(command);
 
         // then
         String result = new String(decrypt.decryptedByte(), StandardCharsets.UTF_8);
@@ -86,14 +98,13 @@ class EncryptServiceTest extends IntegrationTest {
         // given
         String target = "target";
         String fileName = "fileName";
-        String key = "secret";
+        FolderKey folderKey = FolderKey.ofPlainKeyForEncrypt("secret", null);
         byte[] bytes = target.getBytes(StandardCharsets.UTF_8);
-        FileEncryptCommand command = new FileEncryptCommand(null, fileName, key, bytes);
-        EncryptResult encrypt = encryptService.encryptWithNoSave(command);
+        EncryptWithoutSaveCommand command = new EncryptWithoutSaveCommand(folderKey, bytes);
+        byte[] encrypted = encryptService.encryptWithoutSave(command);
 
         // when
-        byte[] decrypted = encryptService.decryptForRequestedFile(encrypt.encryptedByte(), key)
-                .decryptedByte();
+        byte[] decrypted = encryptService.decryptRequestedFile(new DecryptRequestedFileCommand(encrypted, folderKey));
 
         // then
         String result = new String(decrypted, StandardCharsets.UTF_8);
@@ -105,16 +116,21 @@ class EncryptServiceTest extends IntegrationTest {
         // given
         String target = "target";
         String fileName = "fileName";
-        String key = "secret";
+        FolderKey folderKey = FolderKey.ofPlainKeyForEncrypt("secret", null);
         byte[] bytes = target.getBytes(StandardCharsets.UTF_8);
-        EncryptResult encrypt = encryptService.encrypt(new FileEncryptCommand(memberId, fileName, key, bytes));
-        given(s3ApiClient.downloadByteFile(eq(encrypt.metadata().getEncryptedFileName())))
-                .willReturn(encrypt.encryptedByte());
-        FileDecryptCommand command = new FileDecryptCommand(encrypt.metadata().getId(), memberId, "wrong");
+        EncryptWithSaveCommand saveCommand = new EncryptWithSaveCommand(memberId, fileName, "", folderKey, bytes);
+        ArgumentCaptor<byte[]> uploadByteCapture = ArgumentCaptor.forClass(byte[].class);
+        FileMetadata metadata = encryptService.encrypt(saveCommand);
+        verify(s3ApiClient).uploadByteUsingStream(uploadByteCapture.capture(), anyString());
+
+        FolderKey failFolderKey = FolderKey.ofPlainKeyForEncrypt("secret1", null);
+        DecryptSavedFileCommand command = new DecryptSavedFileCommand(metadata.getId(), memberId, failFolderKey);
+        given(s3ApiClient.downloadByteFile(eq(metadata.getEncryptedFileName())))
+                .willReturn(uploadByteCapture.getValue());
 
         // when & then
         Assertions.assertThatThrownBy(() -> {
-            encryptService.decrypt(command);
+            encryptService.decryptSavedFile(command);
         }).isInstanceOf(ForbiddenException.class);
     }
 }

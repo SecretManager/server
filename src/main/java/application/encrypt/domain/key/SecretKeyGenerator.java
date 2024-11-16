@@ -1,6 +1,5 @@
-package application.encrypt.domain;
+package application.encrypt.domain.key;
 
-import jakarta.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import javax.crypto.SecretKey;
@@ -12,10 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SecretKeyGenerator {
 
-    public @Nullable SecretKey generateAESKey(@Nullable String plainKey) {
-        if (plainKey == null) {
-            return null;
-        }
+    public SecretKey generateAESKey(String plainKey) {
         try {
             MessageDigest sha256Digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = sha256Digest.digest(plainKey.getBytes(StandardCharsets.UTF_8));

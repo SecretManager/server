@@ -1,9 +1,7 @@
 package application.member.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 
@@ -20,7 +18,6 @@ import org.junit.jupiter.api.Test;
 class MemberTest {
 
     private final MemberValidator memberValidator = mock(MemberValidator.class);
-    private final PasswordEncryptor encryptor = mock(PasswordEncryptor.class);
 
     @Nested
     class 회원가입_시 {
@@ -28,30 +25,15 @@ class MemberTest {
         @Test
         void 회원가입_조건_검증에_실패하면_예외() {
             // given
-            Member member = new Member("user", "pss", "email@email.com");
+            Member member = Member.preSignup("user", "pss", "email@email.com");
             willThrow(new RuntimeException())
                     .given(memberValidator)
                     .validateSignup(eq("user"));
 
             // when & then
             assertThatThrownBy(() -> {
-                member.signup(memberValidator, encryptor);
+                member.signup(memberValidator);
             });
-        }
-
-        @Test
-        void 회원가입_조건_검증에_통과하면_비밀번호가_암호화된다() {
-            // given
-            Member member = new Member("user", "pss", "email@email.com");
-            given(encryptor.encrypt(eq("pss")))
-                    .willReturn("encryptedByte");
-
-            // when
-            member.signup(memberValidator, encryptor);
-
-            // then
-            assertThat(member.getPlainPassword()).isNull();
-            assertThat(member.getHashedPassword()).isEqualTo("encryptedByte");
         }
     }
 
@@ -61,26 +43,22 @@ class MemberTest {
         @Test
         void 비밀번호가_일치하지_않으면_실패() {
             // given
-            Member member = new Member(1L, "user", "hashed", "email@email.com");
-            given(encryptor.checkPassword(eq("plain"), eq("hashed")))
-                    .willReturn(false);
+            Member member = Member.preSignup("user", "pwd", "email@email.com");
 
             // when & then
             assertThatThrownBy(() -> {
-                member.login(encryptor, "plain");
+                member.login("pwd1");
             });
         }
 
         @Test
         void 비밀번호가_일치하면_성공() {
             // given
-            Member member = new Member(1L, "user", "hashed", "email@email.com");
-            given(encryptor.checkPassword(eq("plain"), eq("hashed")))
-                    .willReturn(true);
+            Member member = Member.preSignup("user", "pwd", "email@email.com");
 
             // when & then
             Assertions.assertDoesNotThrow(() -> {
-                member.login(encryptor, "plain");
+                member.login("pwd");
             });
         }
     }

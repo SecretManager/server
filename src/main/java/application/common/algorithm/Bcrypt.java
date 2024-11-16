@@ -1,4 +1,4 @@
-package application.encrypt.domain.algorithm;
+package application.common.algorithm;
 
 import org.mindrot.jbcrypt.BCrypt;
 

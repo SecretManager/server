@@ -2,12 +2,14 @@ package application.encrypt.presentation;
 
 import application.auth.Auth;
 import application.encrypt.application.EncryptService;
+import application.encrypt.application.KeyQueryService;
 import application.encrypt.application.result.DecryptResult;
-import application.encrypt.application.result.EncryptResult;
-import application.encrypt.presentation.request.FileDecryptForRequestedFileRequest;
-import application.encrypt.presentation.request.FileDecryptRequest;
-import application.encrypt.presentation.request.FileEncryptRequest;
-import application.encrypt.presentation.request.FileEncryptWithNoSaveRequest;
+import application.encrypt.domain.FileMetadata;
+import application.encrypt.domain.key.FolderKey;
+import application.encrypt.presentation.request.DecryptRequestedFileRequest;
+import application.encrypt.presentation.request.DecryptSavedFileRequest;
+import application.encrypt.presentation.request.FileEncryptWithSaveRequest;
+import application.encrypt.presentation.request.FileEncryptWithoutSaveRequest;
 import application.member.domain.Member;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,50 +31,44 @@ import org.springframework.web.bind.annotation.RestController;
 public class EncryptController {
 
     private final EncryptService encryptService;
+    private final KeyQueryService keyQueryService;
+
+    @PostMapping("/encrypt")
+    public ResponseEntity<Long> encrypt(
+            @Auth Member member,
+            @ModelAttribute FileEncryptWithSaveRequest request
+    ) throws Exception {
+        Long memberId = member.getId();
+        FolderKey folderKey = keyQueryService.getFolderKeyForEncrypt(request.toFolderKeyQuery(memberId));
+        FileMetadata metadata = encryptService.encrypt(request.toCommand(memberId, folderKey));
+        return ResponseEntity.ok(metadata.getId());
+    }
 
     @PostMapping("/encrypt-with-no-save")
     public ResponseEntity<byte[]> encryptWithNoSave(
-            @ModelAttribute FileEncryptWithNoSaveRequest request
+            @ModelAttribute FileEncryptWithoutSaveRequest request
     ) throws Exception {
-        EncryptResult encryptResult = encryptService.encryptWithNoSave(request.toCommand());
-        String filename = encryptResult.metadata().getOriginalFileName();
-        byte[] encrypt = encryptResult.encryptedByte();
-        return writeFile(encrypt, "encrypted_" + filename);
-    }
-
-    @PostMapping("/encrypt")
-    public ResponseEntity<byte[]> encrypt(
-            @Auth Member member,
-            @ModelAttribute FileEncryptRequest request
-    ) throws Exception {
-        EncryptResult encryptResult = encryptService.encrypt(request.toCommand(member));
-        if (request.downloadFile()) {
-            String filename = encryptResult.metadata().getOriginalFileName();
-            byte[] encrypt = encryptResult.encryptedByte();
-            return writeFile(encrypt, "encrypted_" + filename);
-        }
-        return ResponseEntity.ok(null);
-    }
-
-    @PostMapping("/decrypt")
-    public ResponseEntity<byte[]> decrypt(
-            @ModelAttribute FileDecryptForRequestedFileRequest request
-    ) throws Exception {
-        byte[] bytes = request.file().getBytes();
-        DecryptResult decryptResult = encryptService.decryptForRequestedFile(bytes, request.plainKey());
-        byte[] decryptedBytes = decryptResult.decryptedByte();
-        return writeFile(decryptedBytes, "decrypted_" + request.file().getOriginalFilename());
+        byte[] bytes = encryptService.encryptWithoutSave(request.toCommand());
+        return writeFile(bytes, "encrypted_" + request.file().getOriginalFilename());
     }
 
     @PostMapping("/decrypt/{fileId}")
     public ResponseEntity<byte[]> decrypt(
             @Auth Member member,
             @PathVariable("fileId") Long fileId,
-            @RequestBody FileDecryptRequest request
+            @RequestBody DecryptSavedFileRequest request
     ) throws Exception {
-        DecryptResult decryptResult = encryptService.decrypt(request.toCommand(fileId, member));
+        DecryptResult decryptResult = encryptService.decryptSavedFile(request.toCommand(fileId, member));
         byte[] decryptedBytes = decryptResult.decryptedByte();
-        return writeFile(decryptedBytes, "decrypted_" + decryptResult.metadata().getOriginalFileName());
+        return writeFile(decryptedBytes, "decrypted_" + decryptResult.metadata().getFileName());
+    }
+
+    @PostMapping("/decrypt")
+    public ResponseEntity<byte[]> decrypt(
+            @ModelAttribute DecryptRequestedFileRequest request
+    ) throws Exception {
+        byte[] bytes = encryptService.decryptRequestedFile(request.toCommand());
+        return writeFile(bytes, "decrypted_" + request.file().getOriginalFilename());
     }
 
     private ResponseEntity<byte[]> writeFile(byte[] bytes, String fileName) throws IOException {
