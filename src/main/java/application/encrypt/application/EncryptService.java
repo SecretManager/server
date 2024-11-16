@@ -28,7 +28,7 @@ public class EncryptService {
     private final PersonalKeyRepository personalKeyRepository;
 
     public FileMetadata encrypt(EncryptWithSaveCommand command) {
-        FolderKey folderKey = command.folderKey();
+        FolderKey folderKey = FolderKey.ofPlainKeyForEncrypt(command.folderKey(), command.hint());
         PersonalKey personalKey = personalKeyRepository.getByMemberId(command.memberId());
         KeyChain keyChain = new KeyChain(folderKey, personalKey, serverKey);
         byte[] encrypt = encryptor.encrypt(command.bytes(), keyChain);
@@ -38,7 +38,7 @@ public class EncryptService {
     }
 
     public byte[] encryptWithoutSave(EncryptWithoutSaveCommand command) {
-        FolderKey folderKey = command.folderKey();
+        FolderKey folderKey = FolderKey.ofPlainKeyForEncrypt(command.folderKey(), command.hint());
         KeyChain keyChain = new KeyChain(folderKey, PersonalKey.none(), serverKey);
         return encryptor.encrypt(command.bytes(), keyChain);
     }
@@ -46,7 +46,7 @@ public class EncryptService {
     public DecryptResult decryptSavedFile(DecryptSavedFileCommand command) {
         FileMetadata metadata = fileMetadataRepository.getByIdAndMemberId(command.id(), command.memberId());
         PersonalKey personalKey = personalKeyRepository.getByMemberId(command.memberId());
-        FolderKey folderKey = command.folderKey();
+        FolderKey folderKey = FolderKey.fromPlainKeyForDecrypt(command.folderKey());
         KeyChain keyChain = new KeyChain(folderKey, personalKey, serverKey);
         byte[] encrypted = s3ApiClient.downloadByteFile(metadata.getEncryptedFileName());
         byte[] decrypt = encryptor.decrypt(encrypted, keyChain);
@@ -55,7 +55,7 @@ public class EncryptService {
 
     public byte[] decryptRequestedFile(DecryptRequestedFileCommand command) {
         PersonalKey personalKey = PersonalKey.none();
-        FolderKey folderKey = command.folderKey();
+        FolderKey folderKey = FolderKey.fromPlainKeyForDecrypt(command.folderKey());
         KeyChain keyChain = new KeyChain(folderKey, personalKey, serverKey);
         return encryptor.decrypt(command.encrypted(), keyChain);
     }

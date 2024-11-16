@@ -1,7 +1,5 @@
 package application.encrypt.application;
 
-import application.encrypt.domain.key.DefaultFolderKey;
-import application.encrypt.domain.key.DefaultFolderKeyRepository;
 import application.encrypt.domain.key.PersonalKey;
 import application.encrypt.domain.key.PersonalKeyRepository;
 import application.member.domain.MemberSignupEvent;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class KeyService {
 
-    private final DefaultFolderKeyRepository defaultFolderKeyRepository;
     private final PersonalKeyRepository personalKeyRepository;
 
     @EventListener(MemberSignupEvent.class)
@@ -23,12 +20,9 @@ public class KeyService {
         Long memberId = event.memberId();
         log.info("회원가입 이벤트를 받아 회원 키 생성 시도. memberId: {}", memberId);
 
-        DefaultFolderKey defaultFolderKey = new DefaultFolderKey(memberId);
         PersonalKey personalKey = PersonalKey.createRandom(memberId);
-        DefaultFolderKey savedFolderKey = defaultFolderKeyRepository.save(defaultFolderKey);
         PersonalKey savedPersonalKey = personalKeyRepository.save(personalKey);
 
-        log.info("회원 키 생성 완료. DefaultFolderKeyId: {},  PersonalKeyId: {}",
-                savedFolderKey.getId(), savedPersonalKey.id());
+        log.info("회원 키 생성 완료. PersonalKeyId: {}", savedPersonalKey.id());
     }
 }

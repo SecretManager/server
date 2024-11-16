@@ -15,7 +15,7 @@ class FileMetadataTest {
     @Test
     void 생성_시_랜덤한_이름으로_생성된다() {
         // when
-        FileMetadata metadata = FileMetadata.createRandomName(1L, "origin", "");
+        FileMetadata metadata = FileMetadata.createRandomName(1L, "origin", "", "");
 
         // then
         assertThat(metadata.getEncryptedFileName()).isNotEqualTo("origin");

@@ -1,6 +1,5 @@
 package application.encrypt.domain.key;
 
-import application.common.algorithm.Sha256;
 import jakarta.annotation.Nullable;
 import lombok.Getter;
 
@@ -8,30 +7,30 @@ import lombok.Getter;
 public class FolderKey implements Key {
 
     @Nullable
-    private String hashedDefaultFolderKey;
+    private String key;
     private String hint;
 
-    public FolderKey(@Nullable String hashedDefaultFolderKey, @Nullable String hint) {
-        this.hashedDefaultFolderKey = hashedDefaultFolderKey;
+    public FolderKey(@Nullable String key, @Nullable String hint) {
+        this.key = key;
         this.hint = hint;
     }
 
-    public static FolderKey ofPlainKeyForEncrypt(String plainKey, String hint) {
-        if (plainKey == null) {
+    public static FolderKey ofPlainKeyForEncrypt(String key, String hint) {
+        if (key == null) {
             return new FolderKey(null, null);
         }
-        return new FolderKey(Sha256.encrypt(plainKey), hint);
+        return new FolderKey(key, hint);
     }
 
-    public static FolderKey fromPlainKeyForDecrypt(String plainKey) {
-        if (plainKey == null) {
+    public static FolderKey fromPlainKeyForDecrypt(String key) {
+        if (key == null) {
             return new FolderKey(null, null);
         }
-        return new FolderKey(Sha256.encrypt(plainKey), null);
+        return new FolderKey(key, null);
     }
 
     @Override
     public String getKey() {
-        return hashedDefaultFolderKey;
+        return key;
     }
 }

@@ -2,10 +2,8 @@ package application.encrypt.presentation;
 
 import application.auth.Auth;
 import application.encrypt.application.EncryptService;
-import application.encrypt.application.KeyQueryService;
 import application.encrypt.application.result.DecryptResult;
 import application.encrypt.domain.FileMetadata;
-import application.encrypt.domain.key.FolderKey;
 import application.encrypt.presentation.request.DecryptRequestedFileRequest;
 import application.encrypt.presentation.request.DecryptSavedFileRequest;
 import application.encrypt.presentation.request.FileEncryptWithSaveRequest;
@@ -31,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class EncryptController {
 
     private final EncryptService encryptService;
-    private final KeyQueryService keyQueryService;
 
     @PostMapping("/encrypt")
     public ResponseEntity<Long> encrypt(
@@ -39,8 +36,7 @@ public class EncryptController {
             @ModelAttribute FileEncryptWithSaveRequest request
     ) throws Exception {
         Long memberId = member.getId();
-        FolderKey folderKey = keyQueryService.getFolderKeyForEncrypt(request.toFolderKeyQuery(memberId));
-        FileMetadata metadata = encryptService.encrypt(request.toCommand(memberId, folderKey));
+        FileMetadata metadata = encryptService.encrypt(request.toCommand(memberId));
         return ResponseEntity.ok(metadata.getId());
     }
 
