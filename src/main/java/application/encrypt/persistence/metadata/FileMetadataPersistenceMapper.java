@@ -1,4 +1,4 @@
-package application.encrypt.persistence;
+package application.encrypt.persistence.metadata;
 
 import application.encrypt.domain.FileMetadata;
 import org.mapstruct.Mapper;

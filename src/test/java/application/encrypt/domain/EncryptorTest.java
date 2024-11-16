@@ -4,7 +4,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import javax.crypto.SecretKey;
+import application.encrypt.domain.key.FolderKey;
+import application.encrypt.domain.key.KeyChain;
+import application.encrypt.domain.key.PersonalKey;
+import application.encrypt.domain.key.SecretKeyGenerator;
+import application.encrypt.domain.key.ServerKey;
+import application.encrypt.domain.key.ServerKey.ServerSecretKeyProperty;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -17,7 +22,7 @@ import org.junit.jupiter.api.Test;
 class EncryptorTest {
 
     private final SecretKeyGenerator secretKeyGenerator = new SecretKeyGenerator();
-    private final Encryptor encryptor = new Encryptor();
+    private final Encryptor encryptor = new Encryptor(secretKeyGenerator);
 
     @Nested
     class 암호화_시 {
@@ -25,13 +30,16 @@ class EncryptorTest {
         @Test
         void 여러_키로_암호화_가능() {
             // given
-            SecretKey key1 = secretKeyGenerator.generateAESKey("key1");
-            SecretKey key2 = secretKeyGenerator.generateAESKey("key2");
+            KeyChain keyChain = new KeyChain(
+                    FolderKey.ofPlainKeyForEncrypt("1", null),
+                    new PersonalKey(null, null, "2"),
+                    new ServerKey(new ServerSecretKeyProperty("3"))
+            );
             String target = "target";
 
             // when & then
             assertDoesNotThrow(() -> {
-                encryptor.encrypt(target.getBytes(UTF_8), key1, key2);
+                encryptor.encrypt(target.getBytes(UTF_8), keyChain);
             });
         }
     }
@@ -42,30 +50,16 @@ class EncryptorTest {
         @Test
         void 여러_키로_복호화_가능() {
             // given
-            SecretKey key1 = secretKeyGenerator.generateAESKey("key1");
-            SecretKey key2 = secretKeyGenerator.generateAESKey("key2");
-            String target = "target";
-            byte[] encrypt = encryptor.encrypt(target.getBytes(UTF_8), key1, key2);
-
-            // when
-            byte[] decrypt = encryptor.decrypt(encrypt, key2, key1);
-
-            // then
-            assertThat(new String(decrypt, UTF_8)).isEqualTo(target);
-        }
-
-        @Test
-        void 중간에_키가_없으면_생략하고_복호화() {
-            // given
-            SecretKey key1 = secretKeyGenerator.generateAESKey("key1");
-            SecretKey key2 = secretKeyGenerator.generateAESKey("key2");
-            String target = "target";
-            byte[] encrypt = encryptor.encrypt(target.getBytes(UTF_8),
-                    null, key1, null, key2, null
+            KeyChain keyChain = new KeyChain(
+                    FolderKey.ofPlainKeyForEncrypt("1", null),
+                    new PersonalKey(null, null, "2"),
+                    new ServerKey(new ServerSecretKeyProperty("3"))
             );
+            String target = "target";
+            byte[] encrypt = encryptor.encrypt(target.getBytes(UTF_8), keyChain);
 
             // when
-            byte[] decrypt = encryptor.decrypt(encrypt, key2, key1);
+            byte[] decrypt = encryptor.decrypt(encrypt, keyChain);
 
             // then
             assertThat(new String(decrypt, UTF_8)).isEqualTo(target);

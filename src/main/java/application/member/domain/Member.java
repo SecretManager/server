@@ -2,8 +2,7 @@ package application.member.domain;
 
 import application.common.ApplicationException;
 import application.common.Default;
-import application.encrypt.domain.algorithm.Bcrypt;
-import application.encrypt.domain.key.MemberKey;
+import application.common.algorithm.Bcrypt;
 import jakarta.annotation.Nullable;
 import lombok.Getter;
 

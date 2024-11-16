@@ -1,7 +1,6 @@
-package application.encrypt.domain;
+package application.encrypt.domain.key;
 
 import java.util.Objects;
-import javax.crypto.SecretKey;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -9,17 +8,21 @@ import org.springframework.stereotype.Component;
 
 @Getter
 @Component
-public class ServerSecretKey {
+public class ServerKey implements Key {
 
-    private final SecretKey secretKey;
+    private final String secretKey;
 
     @Autowired
-    public ServerSecretKey(
-            ServerSecretKeyProperty property,
-            SecretKeyGenerator secretKeyGenerator
+    public ServerKey(
+            ServerSecretKeyProperty property
     ) {
         Objects.requireNonNull(property.secretKey, "server secret key cannot be null");
-        this.secretKey = secretKeyGenerator.generateAESKey(property.secretKey);
+        this.secretKey = property.secretKey;
+    }
+
+    @Override
+    public String getKey() {
+        return secretKey;
     }
 
     @ConfigurationProperties("encrypt")

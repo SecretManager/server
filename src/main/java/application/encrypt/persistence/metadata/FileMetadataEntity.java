@@ -1,4 +1,4 @@
-package application.encrypt.persistence;
+package application.encrypt.persistence.metadata;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

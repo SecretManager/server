@@ -1,4 +1,4 @@
-package application.encrypt.persistence;
+package application.encrypt.persistence.metadata;
 
 import application.common.NotFoundException;
 import java.util.Optional;

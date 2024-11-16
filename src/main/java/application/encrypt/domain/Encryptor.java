@@ -1,9 +1,12 @@
 package application.encrypt.domain;
 
 import application.common.ForbiddenException;
+import application.encrypt.domain.key.KeyChain;
+import application.encrypt.domain.key.SecretKeyGenerator;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.List;
 import javax.crypto.AEADBadTagException;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -20,12 +23,12 @@ public class Encryptor {
     private static final int AES_GCM_TAG_LENGTH = 128;
     private static final String AES_GCM_TRANSFORMATION = "AES/GCM/NoPadding";
 
-    public byte[] encrypt(byte[] input, SecretKey... keys) {
+    private final SecretKeyGenerator generator;
+
+    public byte[] encrypt(byte[] input, KeyChain keyChain) {
         byte[] result = input;
-        for (SecretKey key : keys) {
-            if (key == null) {
-                continue;
-            }
+        List<SecretKey> encryptKeys = keyChain.getEncryptKeys(generator);
+        for (SecretKey key : encryptKeys) {
             result = encryptUsingSingleKey(result, key);
         }
         return result;
@@ -44,12 +47,10 @@ public class Encryptor {
         }
     }
 
-    public byte[] decrypt(byte[] input, SecretKey... keys) {
+    public byte[] decrypt(byte[] input, KeyChain keyChain) {
         byte[] result = input;
-        for (SecretKey key : keys) {
-            if (key == null) {
-                continue;
-            }
+        List<SecretKey> decryptKeys = keyChain.getDecryptKeys(generator);
+        for (SecretKey key : decryptKeys) {
             result = decryptUsingSingleKey(result, key);
         }
         return result;

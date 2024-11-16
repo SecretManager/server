@@ -1,9 +1,11 @@
 package application.encrypt.application.command;
 
-public record FileEncryptCommand(
+import application.encrypt.domain.key.FolderKey;
+
+public record EncryptWithSaveCommand(
         Long memberId,
         String fileName,
-        String plainKey,
+        FolderKey folderKey,
         byte[] bytes
 ) {
 }

@@ -3,7 +3,7 @@ package application.support;
 import static com.navercorp.fixturemonkey.api.experimental.JavaGetterMethodPropertySelector.javaGetter;
 
 import application.encrypt.application.EncryptService;
-import application.encrypt.persistence.FileMetadataEntityRepository;
+import application.encrypt.persistence.metadata.FileMetadataEntityRepository;
 import application.infra.s3.S3ApiClient;
 import application.member.application.MemberService;
 import application.member.persistence.MemberEntity;

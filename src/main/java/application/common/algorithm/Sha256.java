@@ -1,4 +1,4 @@
-package application.encrypt.domain.algorithm;
+package application.common.algorithm;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

@@ -4,8 +4,10 @@ import application.member.application.command.LoginCommand;
 import application.member.application.command.SignupCommand;
 import application.member.domain.Member;
 import application.member.domain.MemberRepository;
+import application.member.domain.MemberSignupEvent;
 import application.member.domain.MemberValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -14,11 +16,14 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberValidator memberValidator;
+    private final ApplicationEventPublisher publisher;
 
     public Member signup(SignupCommand command) {
         Member member = command.toMember();
         member.signup(memberValidator);
-        return memberRepository.save(member);
+        Member saved = memberRepository.save(member);
+        publisher.publishEvent(new MemberSignupEvent(saved.getId()));
+        return saved;
     }
 
     public Member login(LoginCommand command) {
