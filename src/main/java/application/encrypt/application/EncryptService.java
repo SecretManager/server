@@ -59,4 +59,13 @@ public class EncryptService {
         KeyChain keyChain = new KeyChain(folderKey, personalKey, serverKey);
         return encryptor.decrypt(command.encrypted(), keyChain);
     }
+
+    public DecryptResult downloadEncryptedFile(Long fileId, Long memberId) {
+        FileMetadata metadata = fileMetadataRepository.getByIdAndMemberId(fileId, memberId);
+        PersonalKey personalKey = personalKeyRepository.getByMemberId(memberId);
+        KeyChain keyChain = new KeyChain(null, personalKey, null);
+        byte[] encrypted = s3ApiClient.downloadByteFile(metadata.getEncryptedFileName());
+        byte[] decryptUsingPersonalKey = encryptor.decrypt(encrypted, keyChain);
+        return new DecryptResult(metadata, decryptUsingPersonalKey);
+    }
 }
