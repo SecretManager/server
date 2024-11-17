@@ -12,6 +12,7 @@ public record KeyChain(
 ) {
     public List<SecretKey> getEncryptKeys(SecretKeyGenerator generator) {
         return Stream.of(serverKey, folderKey, personalKey)
+                .filter(Objects::nonNull)
                 .map(Key::getKey)
                 .filter(Objects::nonNull)
                 .map(generator::generateAESKey)

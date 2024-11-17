@@ -16,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,6 +66,15 @@ public class EncryptController {
     ) throws Exception {
         byte[] bytes = encryptService.decryptRequestedFile(request.toCommand());
         return writeFile(bytes, "decrypted_" + request.file().getOriginalFilename());
+    }
+
+    @GetMapping("/download/{fileId}")
+    public ResponseEntity<byte[]> downloadEncryptedFile(
+            @Auth Member member,
+            @PathVariable("fileId") Long fileId
+    ) throws IOException {
+        DecryptResult decryptResult = encryptService.downloadEncryptedFile(fileId, member.getId());
+        return writeFile(decryptResult.decryptedByte(), decryptResult.metadata().getFileName());
     }
 
     private ResponseEntity<byte[]> writeFile(byte[] bytes, String fileName) throws IOException {
