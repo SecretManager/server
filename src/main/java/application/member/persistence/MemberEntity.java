@@ -1,8 +1,11 @@
 package application.member.persistence;
 
 import application.common.entity.RootEntity;
+import application.member.domain.Membership;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,4 +34,8 @@ public class MemberEntity extends RootEntity<Long> {
 
     @Column(nullable = true)
     private String email;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Membership membership;
 }

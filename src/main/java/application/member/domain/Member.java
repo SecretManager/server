@@ -16,27 +16,25 @@ public class Member {
     @Nullable
     private String email;
 
+    private Membership membership;
+
     public static Member preSignup(String username, String plainPassword, @Nullable String email) {
         return new Member(
+                null,
                 username,
                 Bcrypt.encrypt(plainPassword),
-                email
+                email,
+                Membership.FREE
         );
     }
 
-    private Member(String username, String hashedPassword, @Nullable String email) {
-        this.id = null;
-        this.username = username;
-        this.hashedPassword = hashedPassword;
-        this.email = email;
-    }
-
     @Default
-    public Member(Long id, String username, String hashedPassword, String email) {
+    public Member(Long id, String username, String hashedPassword, String email, Membership membership) {
         this.id = id;
         this.username = username;
         this.hashedPassword = hashedPassword;
         this.email = email;
+        this.membership = membership;
     }
 
     public void signup(MemberValidator validator) {
