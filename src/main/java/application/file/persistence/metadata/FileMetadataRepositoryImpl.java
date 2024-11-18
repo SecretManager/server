@@ -1,0 +1,28 @@
+package application.file.persistence.metadata;
+
+import application.file.domain.FileMetadata;
+import application.file.domain.FileMetadataRepository;
+import application.member.domain.Member;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+@RequiredArgsConstructor
+@Component
+public class FileMetadataRepositoryImpl implements FileMetadataRepository {
+
+    private final FileMetadataEntityRepository fileMetadataRepository;
+    private final FileMetadataPersistenceMapper mapper;
+
+    @Override
+    public FileMetadata save(FileMetadata fileMetadata) {
+        FileMetadataEntity entity = mapper.toEntity(fileMetadata);
+        FileMetadataEntity saved = fileMetadataRepository.save(entity);
+        return mapper.toDomain(saved);
+    }
+
+    @Override
+    public FileMetadata getByIdAndMember(Long id, Member member) {
+        FileMetadataEntity found = fileMetadataRepository.getByIdAndMemberId(id, member.getId());
+        return mapper.toDomain(found);
+    }
+}
