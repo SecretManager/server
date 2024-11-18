@@ -2,8 +2,8 @@ package application.support;
 
 import static com.navercorp.fixturemonkey.api.experimental.JavaGetterMethodPropertySelector.javaGetter;
 
-import application.encrypt.application.EncryptService;
-import application.encrypt.persistence.metadata.FileMetadataEntityRepository;
+import application.file.application.FileService;
+import application.file.persistence.metadata.FileMetadataEntityRepository;
 import application.infra.s3.S3ApiClient;
 import application.member.application.MemberService;
 import application.member.persistence.MemberEntity;
@@ -27,7 +27,7 @@ public abstract class IntegrationTest extends MockTestSupport {
     protected MemberService memberService;
 
     @Autowired
-    protected EncryptService encryptService;
+    protected FileService fileService;
 
     @Autowired
     protected FileMetadataEntityRepository fileMetadataEntityRepository;
