@@ -2,6 +2,7 @@ package application.encrypt.persistence.metadata;
 
 import application.encrypt.domain.FileMetadata;
 import application.encrypt.domain.FileMetadataRepository;
+import application.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,8 +21,8 @@ public class FileMetadataRepositoryImpl implements FileMetadataRepository {
     }
 
     @Override
-    public FileMetadata getByIdAndMemberId(Long id, Long memberId) {
-        FileMetadataEntity found = fileMetadataRepository.getByIdAndMemberId(id, memberId);
+    public FileMetadata getByIdAndMember(Long id, Member member) {
+        FileMetadataEntity found = fileMetadataRepository.getByIdAndMemberId(id, member.getId());
         return mapper.toDomain(found);
     }
 }

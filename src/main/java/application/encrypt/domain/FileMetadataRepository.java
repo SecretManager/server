@@ -1,8 +1,10 @@
 package application.encrypt.domain;
 
+import application.member.domain.Member;
+
 public interface FileMetadataRepository {
 
     FileMetadata save(FileMetadata fileMetadata);
 
-    FileMetadata getByIdAndMemberId(Long id, Long memberId);
+    FileMetadata getByIdAndMember(Long id, Member member);
 }

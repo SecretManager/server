@@ -1,8 +1,10 @@
 package application.encrypt.application.command;
 
+import application.member.domain.Member;
+
 public record DecryptSavedFileCommand(
         Long id,
-        Long memberId,
+        Member member,
         String folderKey
 ) {
 }
