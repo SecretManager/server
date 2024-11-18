@@ -1,7 +1,7 @@
 package application.member.persistence;
 
 import application.common.entity.RootEntity;
-import application.member.domain.Membership;
+import application.member.domain.MembershipType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -35,7 +35,9 @@ public class MemberEntity extends RootEntity<Long> {
     @Column(nullable = true)
     private String email;
 
+    private long currentSavedFileBytes;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Membership membership;
+    private MembershipType membershipType;
 }

@@ -10,7 +10,7 @@ public record DecryptSavedFileRequest(
     public DecryptSavedFileCommand toCommand(Long fileId, Member member) {
         return new DecryptSavedFileCommand(
                 fileId,
-                member.getId(),
+                member,
                 folderKey
         );
     }

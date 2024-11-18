@@ -24,7 +24,7 @@ public class Member {
                 username,
                 Bcrypt.encrypt(plainPassword),
                 email,
-                Membership.FREE
+                new Membership(MembershipType.FREE)
         );
     }
 
@@ -46,5 +46,13 @@ public class Member {
         if (!pass) {
             throw new UnAuthorizedException("로그인에 실패했습니다. 비밀번호를 확인해주세요.");
         }
+    }
+
+    public void uploadFile(long fileBytes) {
+        membership.uploadFile(fileBytes);
+    }
+
+    public void downloadFile(int currentDownloadCountPerMonth) {
+        membership.downloadFile(currentDownloadCountPerMonth);
     }
 }

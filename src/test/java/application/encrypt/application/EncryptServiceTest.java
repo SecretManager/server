@@ -15,6 +15,7 @@ import application.encrypt.application.command.EncryptWithoutSaveCommand;
 import application.encrypt.application.result.DecryptResult;
 import application.encrypt.domain.FileMetadata;
 import application.member.application.command.SignupCommand;
+import application.member.domain.Member;
 import application.support.IntegrationTest;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -31,12 +32,11 @@ import org.mockito.ArgumentCaptor;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class EncryptServiceTest extends IntegrationTest {
 
-    private Long memberId;
+    private Member member;
 
     @BeforeEach
     void setUp() {
-        memberId = memberService.signup(new SignupCommand("username", "1234", Optional.empty()))
-                .getId();
+        member = memberService.signup(new SignupCommand("username", "1234", Optional.empty()));
     }
 
     @Test
@@ -45,7 +45,7 @@ class EncryptServiceTest extends IntegrationTest {
         String target = "target";
         String fileName = "fileName";
         byte[] bytes = target.getBytes(StandardCharsets.UTF_8);
-        EncryptWithSaveCommand command = new EncryptWithSaveCommand(memberId, fileName, "", "secret", "", bytes);
+        EncryptWithSaveCommand command = new EncryptWithSaveCommand(member, fileName, 10, "", "secret", "", bytes);
 
         // when & then
         assertDoesNotThrow(() -> {
@@ -72,12 +72,12 @@ class EncryptServiceTest extends IntegrationTest {
         String target = "target";
         String fileName = "fileName";
         byte[] bytes = target.getBytes(StandardCharsets.UTF_8);
-        EncryptWithSaveCommand saveCommand = new EncryptWithSaveCommand(memberId, fileName, "", "secret", "", bytes);
+        EncryptWithSaveCommand saveCommand = new EncryptWithSaveCommand(member, fileName, 10, "", "secret", "", bytes);
         ArgumentCaptor<byte[]> uploadByteCapture = ArgumentCaptor.forClass(byte[].class);
         FileMetadata metadata = encryptService.encrypt(saveCommand);
         verify(s3ApiClient).uploadByteUsingStream(uploadByteCapture.capture(), anyString());
 
-        DecryptSavedFileCommand command = new DecryptSavedFileCommand(metadata.getId(), memberId, "secret");
+        DecryptSavedFileCommand command = new DecryptSavedFileCommand(metadata.getId(), member, "secret");
         given(s3ApiClient.downloadByteFile(eq(metadata.getEncryptedFileName())))
                 .willReturn(uploadByteCapture.getValue());
 
@@ -93,7 +93,6 @@ class EncryptServiceTest extends IntegrationTest {
     void 저장_없이_사용자용_복호화() {
         // given
         String target = "target";
-        String fileName = "fileName";
         byte[] bytes = target.getBytes(StandardCharsets.UTF_8);
         EncryptWithoutSaveCommand command = new EncryptWithoutSaveCommand("secret", null, bytes);
         byte[] encrypted = encryptService.encryptWithoutSave(command);
@@ -112,12 +111,13 @@ class EncryptServiceTest extends IntegrationTest {
         String target = "target";
         String fileName = "fileName";
         byte[] bytes = target.getBytes(StandardCharsets.UTF_8);
-        EncryptWithSaveCommand saveCommand = new EncryptWithSaveCommand(memberId, fileName, "", "secret", null, bytes);
+        EncryptWithSaveCommand saveCommand = new EncryptWithSaveCommand(member, fileName, 10, "", "secret", null,
+                bytes);
         ArgumentCaptor<byte[]> uploadByteCapture = ArgumentCaptor.forClass(byte[].class);
         FileMetadata metadata = encryptService.encrypt(saveCommand);
         verify(s3ApiClient).uploadByteUsingStream(uploadByteCapture.capture(), anyString());
 
-        DecryptSavedFileCommand command = new DecryptSavedFileCommand(metadata.getId(), memberId, "secret1");
+        DecryptSavedFileCommand command = new DecryptSavedFileCommand(metadata.getId(), member, "secret1");
         given(s3ApiClient.downloadByteFile(eq(metadata.getEncryptedFileName())))
                 .willReturn(uploadByteCapture.getValue());
 

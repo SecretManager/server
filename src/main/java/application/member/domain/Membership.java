@@ -1,30 +1,38 @@
 package application.member.domain;
 
-import application.common.value.Byte;
-import application.common.value.GigaByte;
-import application.common.value.MegaByte;
+import application.common.Default;
+import application.common.exception.ForbiddenException;
 import lombok.Getter;
 
 @Getter
-public enum Membership {
-    FREE(0, new MegaByte(300), false, 10),
-    BASIC(2_000, new GigaByte(10), true, 20),
-    ADVANCED(5_000, new GigaByte(30), true, 30),
-    PRO(9_000, new GigaByte(50), true, 100),
-    PREMIUM(15_000, new GigaByte(100), true, 100),
-    ELITE(25_000, new GigaByte(200), true, 100),
-    ULTRA(40_000, new GigaByte(500), true, 100),
-    ;
+public class Membership {
 
-    private final int pricePerMonth;
-    private final Byte savedFileLimit;
-    private final boolean isAdBlock;
-    private final int maxDownLoadCount;
+    private long currentSavedFileBytes;
+    private MembershipType membershipType;
 
-    Membership(int pricePerMonth, Byte savedFileLimit, boolean isAdBlock, int maxDownLoadCount) {
-        this.pricePerMonth = pricePerMonth;
-        this.savedFileLimit = savedFileLimit;
-        this.isAdBlock = isAdBlock;
-        this.maxDownLoadCount = maxDownLoadCount;
+    public Membership(MembershipType membershipType) {
+        this.currentSavedFileBytes = 0;
+        this.membershipType = membershipType;
+    }
+
+    @Default
+    public Membership(long currentSavedFileBytes, MembershipType membershipType) {
+        this.currentSavedFileBytes = currentSavedFileBytes;
+        this.membershipType = membershipType;
+    }
+
+    public void uploadFile(long fileSize) {
+        int savedFileLimitMegaByte = membershipType.getSavedFileLimitByte();
+        if (savedFileLimitMegaByte < currentSavedFileBytes + fileSize) {
+            throw new ForbiddenException("더이상 파일을 저장할 수 없습니다.");
+        }
+        currentSavedFileBytes += fileSize;
+    }
+
+    public void downloadFile(int currentDownloadCountPerMonth) {
+        int maxDownloadCountPerFileForMonth = membershipType.getMaxDownloadCountPerFileForMonth();
+        if (currentDownloadCountPerMonth >= maxDownloadCountPerFileForMonth) {
+            throw new ForbiddenException("더이상 파일을 다운로드 할 수 없습니다.");
+        }
     }
 }

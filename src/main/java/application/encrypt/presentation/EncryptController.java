@@ -37,7 +37,7 @@ public class EncryptController {
             @ModelAttribute FileEncryptWithSaveRequest request
     ) throws Exception {
         Long memberId = member.getId();
-        FileMetadata metadata = encryptService.encrypt(request.toCommand(memberId));
+        FileMetadata metadata = encryptService.encrypt(request.toCommand(member));
         return ResponseEntity.ok(metadata.getId());
     }
 
@@ -73,7 +73,7 @@ public class EncryptController {
             @Auth Member member,
             @PathVariable("fileId") Long fileId
     ) throws IOException {
-        DecryptResult decryptResult = encryptService.downloadEncryptedFile(fileId, member.getId());
+        DecryptResult decryptResult = encryptService.downloadEncryptedFile(fileId, member);
         return writeFile(decryptResult.decryptedByte(), decryptResult.metadata().getFileName());
     }
 
