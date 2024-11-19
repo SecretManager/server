@@ -25,4 +25,16 @@ public class S3Config {
                 .withRegion(Regions.fromName(s3Property.region()))
                 .build();
     }
+
+    @Profile("local")
+    @Bean
+    public S3ApiClient mockS3ApiClient() {
+        return new MockS3ApiClient();
+    }
+
+    @Profile({"prod", "stage"})
+    @Bean
+    public S3ApiClient s3ApiClient() {
+        return new S3ApiClient(s3Client(), s3Property);
+    }
 }
