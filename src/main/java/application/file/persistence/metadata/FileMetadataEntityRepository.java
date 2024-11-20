@@ -19,4 +19,7 @@ public interface FileMetadataEntityRepository extends JpaRepository<FileMetadata
 
     @Query("SELECT fm FROM FileMetadataEntity fm WHERE fm.memberId = :memberId AND fm.fileName LIKE CONCAT('%',:name,'%')")
     List<FileMetadataEntity> findAllByMemberIdAndNameContains(Long memberId, String name);
+
+    @Query("SELECT fm FROM FileMetadataEntity fm WHERE fm.memberId = :memberId AND fm.id IN (:fileIds)")
+    List<FileMetadataEntity> findByIdsInAndMemberId(List<Long> fileIds, Long memberId);
 }

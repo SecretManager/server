@@ -26,5 +26,8 @@ public class FileMetadataEntity extends RootEntity<Long> {
 
     private String fileName;
     private long fileBytesSize;
+    private String description;
     private String encryptedFileName;
+    private String keyHint;
+    private int currentDownloadCountPerMonth;
 }

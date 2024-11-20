@@ -1,6 +1,5 @@
 package application.file.presentation.request;
 
-import application.common.utils.FileUtils;
 import application.file.application.command.EncryptWithSaveCommand;
 import application.member.domain.Member;
 import jakarta.annotation.Nullable;
@@ -21,7 +20,7 @@ public record FileEncryptWithSaveRequest(
         try {
             return new EncryptWithSaveCommand(
                     member,
-                    fileName + "." + FileUtils.getFileExtension(file),
+                    fileName,
                     file.getSize(),
                     description,
                     folderKey,

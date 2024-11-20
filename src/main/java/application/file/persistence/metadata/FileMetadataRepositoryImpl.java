@@ -39,4 +39,12 @@ public class FileMetadataRepositoryImpl implements FileMetadataRepository {
                 .map(mapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<FileMetadata> findAllByMemberAndFileIds(Member member, List<Long> fileIds) {
+        return fileMetadataRepository.findByIdsInAndMemberId(fileIds, member.getId())
+                .stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
 }

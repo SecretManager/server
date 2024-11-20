@@ -16,4 +16,8 @@ public class FileQueryService {
     public List<FileMetadata> findAllByMemberAndNameContains(Member member, String name) {
         return fileMetadataRepository.findAllByMemberAndNameContains(member, name);
     }
+
+    public List<FileMetadata> findKeyHints(Member member, List<Long> fileIds) {
+        return fileMetadataRepository.findAllByMemberAndFileIds(member, fileIds);
+    }
 }

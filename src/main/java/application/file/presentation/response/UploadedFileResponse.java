@@ -7,7 +7,6 @@ public record UploadedFileResponse(
         String fileName,
         long fileBytesSize,
         String description,
-        String keyHint,
         int currentDownloadCountPerMonth
 ) {
     public static UploadedFileResponse from(FileMetadata fileMetadata) {
@@ -16,7 +15,6 @@ public record UploadedFileResponse(
                 fileMetadata.getFileName(),
                 fileMetadata.getFileBytesSize(),
                 fileMetadata.getDescription(),
-                fileMetadata.getKeyHint(),
                 fileMetadata.getCurrentDownloadCountPerMonth()
         );
     }

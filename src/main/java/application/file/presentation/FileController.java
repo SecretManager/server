@@ -9,6 +9,7 @@ import application.file.presentation.request.DecryptRequestedFileRequest;
 import application.file.presentation.request.DecryptSavedFileRequest;
 import application.file.presentation.request.FileEncryptWithSaveRequest;
 import application.file.presentation.request.FileEncryptWithoutSaveRequest;
+import application.file.presentation.response.FileKeyHintResponse;
 import application.file.presentation.response.UploadedFileResponse;
 import application.member.domain.Member;
 import java.io.ByteArrayOutputStream;
@@ -50,7 +51,7 @@ public class FileController {
             @ModelAttribute FileEncryptWithoutSaveRequest request
     ) throws Exception {
         byte[] bytes = fileService.encryptWithoutSave(request.toCommand());
-        return writeFile(bytes, "encrypted_" + request.file().getOriginalFilename());
+        return writeFile(bytes);
     }
 
     @PostMapping("/decrypt/{fileId}")
@@ -61,7 +62,7 @@ public class FileController {
     ) throws Exception {
         DecryptResult decryptResult = fileService.decryptSavedFile(request.toCommand(fileId, member));
         byte[] decryptedBytes = decryptResult.decryptedByte();
-        return writeFile(decryptedBytes, "decrypted_" + decryptResult.metadata().getFileName());
+        return writeFile(decryptedBytes);
     }
 
     @PostMapping("/decrypt")
@@ -69,7 +70,7 @@ public class FileController {
             @ModelAttribute DecryptRequestedFileRequest request
     ) throws Exception {
         byte[] bytes = fileService.decryptRequestedFile(request.toCommand());
-        return writeFile(bytes, "decrypted_" + request.file().getOriginalFilename());
+        return writeFile(bytes);
     }
 
     @GetMapping("/download/{fileId}")
@@ -78,15 +79,14 @@ public class FileController {
             @PathVariable("fileId") Long fileId
     ) throws IOException {
         DecryptResult decryptResult = fileService.downloadEncryptedFile(fileId, member);
-        return writeFile(decryptResult.decryptedByte(), decryptResult.metadata().getFileName());
+        return writeFile(decryptResult.decryptedByte());
     }
 
-    private ResponseEntity<byte[]> writeFile(byte[] bytes, String fileName) throws IOException {
+    private ResponseEntity<byte[]> writeFile(byte[] bytes) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         outputStream.write(bytes);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", fileName);
         return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
     }
 
@@ -95,8 +95,21 @@ public class FileController {
             @Auth Member member,
             @RequestParam(value = "name", defaultValue = "") String name
     ) {
-        return ResponseEntity.ok(fileQueryService.findAllByMemberAndNameContains(member, name).stream()
+        List<UploadedFileResponse> list = fileQueryService.findAllByMemberAndNameContains(member, name).stream()
                 .map(UploadedFileResponse::from)
-                .toList());
+                .toList();
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/hints")
+    public ResponseEntity<List<FileKeyHintResponse>> findKeyHintsForSelectedFiles(
+            @Auth Member member,
+            @RequestParam("fileIds") List<Long> fileIds
+    ) {
+        List<FileKeyHintResponse> response = fileQueryService.findKeyHints(member, fileIds)
+                .stream()
+                .map(FileKeyHintResponse::from)
+                .toList();
+        return ResponseEntity.ok(response);
     }
 }

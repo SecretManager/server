@@ -10,4 +10,6 @@ public interface FileMetadataRepository {
     FileMetadata getByIdAndMember(Long id, Member member);
 
     List<FileMetadata> findAllByMemberAndNameContains(Member member, String name);
+
+    List<FileMetadata> findAllByMemberAndFileIds(Member member, List<Long> fileIds);
 }
