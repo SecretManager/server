@@ -10,12 +10,10 @@ import lombok.Getter;
 public class Member {
 
     private final Long id;
-    private final String name;
     private final String username;
-    private String hashedPassword;
-
+    private String name;
     private String email;
-
+    private String hashedPassword;
     private Membership membership;
 
     public static Member preSignup(String name, String username, String plainPassword, @Nullable String email) {
@@ -56,5 +54,10 @@ public class Member {
 
     public void downloadFile(int currentDownloadCountPerMonth) {
         membership.downloadFile(currentDownloadCountPerMonth);
+    }
+
+    public void update(String name, String email) {
+        this.name = name;
+        this.email = email;
     }
 }

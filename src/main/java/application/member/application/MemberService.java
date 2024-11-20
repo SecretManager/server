@@ -2,6 +2,7 @@ package application.member.application;
 
 import application.member.application.command.LoginCommand;
 import application.member.application.command.SignupCommand;
+import application.member.application.command.UpdateProfileCommand;
 import application.member.domain.Member;
 import application.member.domain.MemberRepository;
 import application.member.domain.MemberSignupEvent;
@@ -30,5 +31,11 @@ public class MemberService {
         Member member = memberRepository.getByUsername(command.username());
         member.login(command.plainPassword());
         return member;
+    }
+
+    public void update(UpdateProfileCommand command) {
+        Member member = command.member();
+        member.update(command.name(), command.email());
+        memberRepository.save(member);
     }
 }

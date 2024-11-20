@@ -11,11 +11,14 @@ import application.member.domain.Member;
 import application.member.domain.MemberRepository;
 import application.member.presentation.request.LoginRequest;
 import application.member.presentation.request.SignupRequest;
+import application.member.presentation.request.UpdateProfileRequest;
 import application.member.presentation.response.MemberResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,7 +44,7 @@ public class MemberController {
 
     @PostMapping
     public ResponseEntity<TokenResponse> signup(
-            @RequestBody SignupRequest request
+            @RequestBody @Valid SignupRequest request
     ) {
         SignupCommand command = mapper.toCommand(request);
         Member member = memberService.signup(command);
@@ -51,12 +54,20 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(
-            @RequestBody LoginRequest request
+            @RequestBody @Valid LoginRequest request
     ) {
         LoginCommand command = mapper.toCommand(request);
         Member member = memberService.login(command);
         TokenResponse token = tokenService.createToken(member.getId());
         return ResponseEntity.ok(token);
+    }
+
+    @PutMapping
+    public void updateProfile(
+            @Auth Member member,
+            @RequestBody @Valid UpdateProfileRequest request
+    ) {
+        memberService.update(request.toCommand(member));
     }
 
     @GetMapping("/my")
