@@ -17,8 +17,10 @@ import application.infra.s3.S3ApiClient;
 import application.member.domain.Member;
 import application.member.domain.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class FileService {
@@ -72,8 +74,8 @@ public class FileService {
     }
 
     public byte[] decryptRequestedFile(DecryptRequestedFileCommand command) {
-        PersonalKey personalKey = PersonalKey.none();
         FolderKey folderKey = FolderKey.fromPlainKeyForDecrypt(command.folderKey());
+        PersonalKey personalKey = PersonalKey.none();
         KeyChain keyChain = new KeyChain(folderKey, personalKey, serverKey);
         return encryptor.decrypt(command.encrypted(), keyChain);
     }

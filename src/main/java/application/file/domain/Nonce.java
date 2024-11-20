@@ -1,7 +1,6 @@
 package application.file.domain;
 
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import lombok.Getter;
@@ -10,11 +9,11 @@ import lombok.Getter;
 public class Nonce {
 
     private static final int NONCE_BYTE_LENGTH = 12;
-    private final String nonce;
+    private final byte[] nonce;
 
     public Nonce(byte[] nonce) {
         validateLength(nonce);
-        this.nonce = new String(nonce);
+        this.nonce = nonce;
     }
 
     private void validateLength(byte[] nonce) {
@@ -46,7 +45,7 @@ public class Nonce {
 
     public byte[] getBytes() {
         byte[] bytes = new byte[NONCE_BYTE_LENGTH];
-        System.arraycopy(nonce.getBytes(StandardCharsets.UTF_8), 0, bytes, 0, NONCE_BYTE_LENGTH);
+        System.arraycopy(nonce, 0, bytes, 0, NONCE_BYTE_LENGTH);
         return bytes;
     }
 }
