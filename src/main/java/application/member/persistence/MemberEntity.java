@@ -26,13 +26,13 @@ public class MemberEntity extends RootEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)
     private String hashedPassword;
 
-    @Column(nullable = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     private long currentSavedFileBytes;

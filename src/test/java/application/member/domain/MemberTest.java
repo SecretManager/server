@@ -1,7 +1,6 @@
 package application.member.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 
@@ -28,7 +27,7 @@ class MemberTest {
             Member member = Member.preSignup("user", "pss", "email@email.com");
             willThrow(new RuntimeException())
                     .given(memberValidator)
-                    .validateSignup(eq("user"));
+                    .validateSignup(member);
 
             // when & then
             assertThatThrownBy(() -> {

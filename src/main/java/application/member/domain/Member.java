@@ -13,7 +13,6 @@ public class Member {
     private final String username;
     private String hashedPassword;
 
-    @Nullable
     private String email;
 
     private Membership membership;
@@ -38,7 +37,7 @@ public class Member {
     }
 
     public void signup(MemberValidator validator) {
-        validator.validateSignup(username);
+        validator.validateSignup(this);
     }
 
     public void login(String plainPassword) {

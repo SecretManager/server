@@ -9,4 +9,6 @@ public interface MemberRepository {
     Member getByUsername(String username);
 
     Member getById(Long memberId);
+
+    boolean existsByEmail(String email);
 }

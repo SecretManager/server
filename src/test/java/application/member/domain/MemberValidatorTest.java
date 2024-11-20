@@ -1,6 +1,7 @@
 package application.member.domain;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import application.support.MockTestSupport;
@@ -26,24 +27,24 @@ class MemberValidatorTest extends MockTestSupport {
     @Test
     void 회원가입_시_아이디가_중복되면_예외() {
         // given
-        String username = "user";
-        given(memberRepository.existsByUsername(username)).willReturn(true);
+        Member member = Member.preSignup("user", "pss", "email@email.com");
+        given(memberRepository.existsByUsername(any())).willReturn(true);
 
         // when & then
         Assertions.assertThatThrownBy(() -> {
-            validator.validateSignup(username);
+            validator.validateSignup(member);
         });
     }
 
     @Test
     void 회원가입_시_아이디가_중복되지_않으면_통과() {
         // given
-        String username = "user";
-        given(memberRepository.existsByUsername(username)).willReturn(false);
+        Member member = Member.preSignup("user", "pss", "email@email.com");
+        given(memberRepository.existsByUsername(any())).willReturn(false);
 
         // when & then
         assertDoesNotThrow(() -> {
-            validator.validateSignup(username);
+            validator.validateSignup(member);
         });
     }
 }

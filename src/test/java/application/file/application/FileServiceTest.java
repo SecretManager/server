@@ -36,7 +36,7 @@ class FileServiceTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        member = memberService.signup(new SignupCommand("username", "1234", Optional.empty()));
+        member = memberService.signup(new SignupCommand("username", "1234", ""));
     }
 
     @Test

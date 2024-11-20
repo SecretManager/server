@@ -35,4 +35,9 @@ public class MemberRepositoryImpl implements MemberRepository {
         MemberEntity entity = memberRepository.getById(memberId);
         return mapper.toDomain(entity);
     }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return memberRepository.existsByEmail(email);
+    }
 }

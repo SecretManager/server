@@ -19,4 +19,6 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Long
         return findById(id)
                 .orElseThrow(() -> new NotFoundException("주어진 id 을 가진 회원을 조회할 수 없습니다."));
     }
+
+    boolean existsByEmail(String email);
 }
