@@ -10,6 +10,7 @@ import lombok.Getter;
 public class Member {
 
     private final Long id;
+    private final String name;
     private final String username;
     private String hashedPassword;
 
@@ -17,9 +18,10 @@ public class Member {
 
     private Membership membership;
 
-    public static Member preSignup(String username, String plainPassword, @Nullable String email) {
+    public static Member preSignup(String name, String username, String plainPassword, @Nullable String email) {
         return new Member(
                 null,
+                name,
                 username,
                 Bcrypt.encrypt(plainPassword),
                 email,
@@ -28,8 +30,9 @@ public class Member {
     }
 
     @Default
-    public Member(Long id, String username, String hashedPassword, String email, Membership membership) {
+    public Member(Long id, String name, String username, String hashedPassword, String email, Membership membership) {
         this.id = id;
+        this.name = name;
         this.username = username;
         this.hashedPassword = hashedPassword;
         this.email = email;

@@ -1,8 +1,11 @@
 package application.member.presentation.request;
 
+import jakarta.validation.constraints.NotBlank;
+
 public record SignupRequest(
-        String username,
-        String plainPassword,
-        String email
+        @NotBlank String name,
+        @NotBlank String username,
+        @NotBlank String plainPassword,
+        @NotBlank String email
 ) {
 }

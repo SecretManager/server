@@ -24,7 +24,7 @@ class MemberTest {
         @Test
         void 회원가입_조건_검증에_실패하면_예외() {
             // given
-            Member member = Member.preSignup("user", "pss", "email@email.com");
+            Member member = Member.preSignup("user", "pss", "", "email@email.com");
             willThrow(new RuntimeException())
                     .given(memberValidator)
                     .validateSignup(member);
@@ -42,7 +42,7 @@ class MemberTest {
         @Test
         void 비밀번호가_일치하지_않으면_실패() {
             // given
-            Member member = Member.preSignup("user", "pwd", "email@email.com");
+            Member member = Member.preSignup("user", "username", "pwd", "email@email.com");
 
             // when & then
             assertThatThrownBy(() -> {
@@ -53,7 +53,7 @@ class MemberTest {
         @Test
         void 비밀번호가_일치하면_성공() {
             // given
-            Member member = Member.preSignup("user", "pwd", "email@email.com");
+            Member member = Member.preSignup("user", "username", "pwd", "email@email.com");
 
             // when & then
             Assertions.assertDoesNotThrow(() -> {

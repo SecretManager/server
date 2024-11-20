@@ -27,7 +27,7 @@ class MemberValidatorTest extends MockTestSupport {
     @Test
     void 회원가입_시_아이디가_중복되면_예외() {
         // given
-        Member member = Member.preSignup("user", "pss", "email@email.com");
+        Member member = Member.preSignup("user", "pss", "", "email@email.com");
         given(memberRepository.existsByUsername(any())).willReturn(true);
 
         // when & then
@@ -39,7 +39,7 @@ class MemberValidatorTest extends MockTestSupport {
     @Test
     void 회원가입_시_아이디가_중복되지_않으면_통과() {
         // given
-        Member member = Member.preSignup("user", "pss", "email@email.com");
+        Member member = Member.preSignup("user", "pss", "", "email@email.com");
         given(memberRepository.existsByUsername(any())).willReturn(false);
 
         // when & then
