@@ -5,14 +5,14 @@ import application.member.domain.MembershipType;
 
 public record MemberResponse(
         Long id,
-        String username,
+        String email,
         MembershipType membershipType,
         long currentSavedFileBytes
 ) {
     public static MemberResponse from(Member member) {
         return new MemberResponse(
                 member.getId(),
-                member.getUsername(),
+                member.getEmail(),
                 member.getMembership().getMembershipType(),
                 member.getMembership().getCurrentSavedFileBytes()
         );
