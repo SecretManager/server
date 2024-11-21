@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum MembershipType {
-    FREE(0, 300_000, false, 10),
+    FREE(0, 5_000_000, false, 10),
     BASIC(2_000, 10_000_000, true, 20),
     ADVANCED(5_000, 30_000_000, true, 30),
     PRO(9_000, 50_000_000, true, 100),

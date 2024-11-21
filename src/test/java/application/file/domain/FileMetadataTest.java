@@ -98,7 +98,7 @@ class FileMetadataTest extends MockTestSupport {
         member.uploadFile(100);
 
         FileMetadata metadata = sut.giveMeBuilder(FileMetadata.class)
-                .set(javaGetter(FileMetadata::getFileBytesSize), 299_999)
+                .set(javaGetter(FileMetadata::getFileBytesSize), 4_999_999)
                 .sample();
 
         // when & then
