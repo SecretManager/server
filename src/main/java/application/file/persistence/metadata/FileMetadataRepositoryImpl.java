@@ -47,4 +47,9 @@ public class FileMetadataRepositoryImpl implements FileMetadataRepository {
                 .map(mapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public void delete(FileMetadata metadata) {
+        fileMetadataRepository.deleteById(metadata.getId());
+    }
 }

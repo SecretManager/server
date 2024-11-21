@@ -29,6 +29,10 @@ public class Membership {
         currentSavedFileBytes += fileSize;
     }
 
+    public void deleteFile(long fileSize) {
+        currentSavedFileBytes -= fileSize;
+    }
+
     public void downloadFile(int currentDownloadCountPerMonth) {
         int maxDownloadCountPerFileForMonth = membershipType.getMaxDownloadCountPerFileForMonth();
         if (currentDownloadCountPerMonth >= maxDownloadCountPerFileForMonth) {

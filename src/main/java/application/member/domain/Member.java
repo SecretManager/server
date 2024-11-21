@@ -56,6 +56,10 @@ public class Member {
         membership.downloadFile(currentDownloadCountPerMonth);
     }
 
+    public void deleteFile(long fileBytesSize) {
+        membership.deleteFile(fileBytesSize);
+    }
+
     public void update(String name, String email) {
         this.name = name;
         this.email = email;

@@ -23,4 +23,9 @@ public class MockS3ApiClient extends S3ApiClient {
     public void uploadByteUsingStream(byte[] fileContent, String fileName) {
         store.put(fileName, fileContent);
     }
+
+    @Override
+    public void deleteFile(String fileName) {
+        store.remove(fileName);
+    }
 }

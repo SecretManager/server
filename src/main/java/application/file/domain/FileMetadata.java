@@ -75,6 +75,10 @@ public class FileMetadata {
         member.uploadFile(fileBytesSize);
     }
 
+    public void delete(Member member) {
+        member.deleteFile(fileBytesSize);
+    }
+
     public void download(Member member) {
         member.downloadFile(currentDownloadCountPerMonth);
         currentDownloadCountPerMonth++;

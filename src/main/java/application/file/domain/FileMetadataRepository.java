@@ -12,4 +12,6 @@ public interface FileMetadataRepository {
     List<FileMetadata> findAllByMemberAndNameContains(Member member, String name);
 
     List<FileMetadata> findAllByMemberAndFileIds(Member member, List<Long> fileIds);
+
+    void delete(FileMetadata metadata);
 }

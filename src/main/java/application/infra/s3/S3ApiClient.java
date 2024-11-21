@@ -49,4 +49,14 @@ public class S3ApiClient {
             throw new RuntimeException(e);
         }
     }
+
+    public void deleteFile(String fileName) {
+        try {
+            s3Client.deleteObject(bucketName, fileName);
+            log.info("Successfully deleted file from S3. fileName: {}", fileName);
+        } catch (Exception e) {
+            log.error("Failed to delete file. fileName: {}, errorMessage: {}", fileName, e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
 }
