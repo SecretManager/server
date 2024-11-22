@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  secret-manager-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-app
+    ports:
+      - "8080:8080"
+    environment:
+      DATASOURCE_URL: jdbc:mysql://mysql:3306/server
+      DATASOURCE_USERNAME: "root"
+      DATASOURCE_PASSWORD: "1234"
+      DB_DRIVER_CLASS_NAME: "com.mysql.cj.jdbc.Driver"
+    networks:
+      - secret-manager-local-network
+    depends_on:
+      - mysql
+
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3306:3306" # 호스트의 3306 포트를 컨테이너의 3306 포트에 매핑
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234 # 루트 비밀번호
+      MYSQL_DATABASE: server # 생성할 데이터베이스 이름
+      MYSQL_USER: mallang     # 사용자 이름
+      MYSQL_PASSWORD: 1234 # 사용자 비밀번호
+    networks:
+      - secret-manager-local-network

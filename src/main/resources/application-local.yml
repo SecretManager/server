@@ -1,17 +1,28 @@
-aws:
-  s3:
-    accessKey: "accessKey"
-    secretKey: "secretKey"
-    region: "ap-northeast-2"
-    bucketName: "files"
+spring:
+  datasource:
+    url: ${DATASOURCE_URL:jdbc:h2:mem:testdb} # 기본값: H2 메모리 데이터베이스
+    username: ${DATASOURCE_USERNAME:sa}      # 기본값: H2 사용자 이름
+    password: ${DATASOURCE_PASSWORD:}        # 기본값: 비밀번호 없음
+    driver-class-name: ${DB_DRIVER_CLASS_NAME:org.h2.Driver} # 기본값: H2 드라이버
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        highlight_sql: true
+    hibernate:
+      ddl-auto: create
+
+
 
 encrypt:
-  secretKey: "server-secret-key"
+  secretKey: secret-key
 
 token:
-  secretKey: "dsakljqd1idj8qwjddj12idjdsakljqd1idj8qwjddj12idjdsakljqd1idj8qwjddj12idjdsakljqd1idj8qwjddj12idjdsakljqd1idj8qwjddj12idj"
-  accessTokenExpirationMillis: 2000000
-  refreshTokenExpirationMillis: 100000000000
+  secretKey: "qd1idj8qwj209f0208dd1idj8qwjddj12idjdsa213958c145qwjddj12idjdsakljqd1idj8qwjddj12idjidj"
+  accessTokenExpirationMillis: 200000000
 
 cors:
-  allowedOrigins: http://localhost:3000, https://secretmanager.netlify.app/
+  allowedOrigins: http://localhost:3000

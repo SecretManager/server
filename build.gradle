@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'secret-manager'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 
 java {
     toolchain {
@@ -69,4 +69,12 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+processResources.dependsOn('copySecret')
+
+tasks.register('copySecret', Copy) {
+    from './backend-properties' // 서브모듈 디렉토리 경로
+    include "**"  // 복사할 파일들
+    into './src/main/resources'  // 복사 위치
 }

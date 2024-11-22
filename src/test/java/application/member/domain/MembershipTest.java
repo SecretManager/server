@@ -43,7 +43,7 @@ class MembershipTest extends MockTestSupport {
             Member member = sut.giveMeBuilder(Member.class)
                     .set(javaGetter(Member::getMembership), new Membership(MembershipType.FREE))
                     .sample();
-            member.uploadFile(4_999_999);
+            member.uploadFile(4_999_999_999L);
 
             // when & then
             assertThatThrownBy(() -> {

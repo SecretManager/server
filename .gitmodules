@@ -1,0 +1,3 @@
+[submodule "backend-properties"]
+	path = backend-properties
+	url = https://github.com/SecretManager/backend-properties.git
