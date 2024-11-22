@@ -22,7 +22,7 @@ public class Membership {
     }
 
     public void uploadFile(long fileSize) {
-        int savedFileLimitMegaByte = membershipType.getSavedFileLimitByte();
+        long savedFileLimitMegaByte = membershipType.getSavedFileLimitByte();
         if (savedFileLimitMegaByte < currentSavedFileBytes + fileSize) {
             throw new ForbiddenException("더이상 파일을 저장할 수 없습니다.");
         }
