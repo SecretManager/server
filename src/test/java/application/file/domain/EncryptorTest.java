@@ -31,7 +31,7 @@ class EncryptorTest {
         void 여러_키로_암호화_가능() {
             // given
             KeyChain keyChain = new KeyChain(
-                    FolderKey.ofPlainKeyForEncrypt("1", null),
+                    FolderKey.fromPlainKey("1"),
                     new PersonalKey(null, null, "2"),
                     new ServerKey(new ServerSecretKeyProperty("3"))
             );
@@ -51,7 +51,7 @@ class EncryptorTest {
         void 여러_키로_복호화_가능() {
             // given
             KeyChain keyChain = new KeyChain(
-                    FolderKey.ofPlainKeyForEncrypt("1", null),
+                    FolderKey.fromPlainKey("1"),
                     new PersonalKey(null, null, "2"),
                     new ServerKey(new ServerSecretKeyProperty("3"))
             );

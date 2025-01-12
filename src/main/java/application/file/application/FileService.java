@@ -34,39 +34,48 @@ public class FileService {
 
     public FileMetadata encrypt(EncryptWithSaveCommand command) {
         Member member = command.member();
-        FolderKey folderKey = FolderKey.ofPlainKeyForEncrypt(command.folderKey(), command.hint());
+
+        FolderKey folderKey = FolderKey.fromPlainKey(command.folderKey());
         PersonalKey personalKey = personalKeyRepository.getByMember(command.member());
         KeyChain keyChain = new KeyChain(folderKey, personalKey, serverKey);
+
         byte[] encrypt = encryptor.encrypt(command.bytes(), keyChain);
+
         FileMetadata metadata = command.toFileMetadata();
         metadata.upload(member);
         s3ApiClient.uploadByteUsingStream(encrypt, metadata.getEncryptedFileName());
+
         memberRepository.save(member);
         return fileMetadataRepository.save(metadata);
     }
 
     public byte[] encryptWithoutSave(EncryptWithoutSaveCommand command) {
-        FolderKey folderKey = FolderKey.ofPlainKeyForEncrypt(command.folderKey(), command.hint());
+        FolderKey folderKey = FolderKey.fromPlainKey(command.folderKey());
         KeyChain keyChain = new KeyChain(folderKey, PersonalKey.none(), serverKey);
         return encryptor.encrypt(command.bytes(), keyChain);
     }
 
     public DecryptResult decryptSavedFile(DecryptSavedFileCommand command) {
         Member member = command.member();
+
         FileMetadata metadata = fileMetadataRepository.getByIdAndMember(command.id(), member);
         metadata.download(member);
+
         PersonalKey personalKey = personalKeyRepository.getByMember(member);
-        FolderKey folderKey = FolderKey.fromPlainKeyForDecrypt(command.folderKey());
+        FolderKey folderKey = FolderKey.fromPlainKey(command.folderKey());
         KeyChain keyChain = new KeyChain(folderKey, personalKey, serverKey);
+
         byte[] encrypted = s3ApiClient.downloadByteFile(metadata.getEncryptedFileName());
+
         byte[] decrypt = encryptor.decrypt(encrypted, keyChain);
+
         memberRepository.save(member);
         fileMetadataRepository.save(metadata);
         return new DecryptResult(metadata, decrypt);
     }
 
     public byte[] decryptRequestedFile(DecryptRequestedFileCommand command) {
-        FolderKey folderKey = FolderKey.fromPlainKeyForDecrypt(command.folderKey());
+        FolderKey folderKey = FolderKey.fromPlainKey(command.folderKey());
         PersonalKey personalKey = PersonalKey.none();
         KeyChain keyChain = new KeyChain(folderKey, personalKey, serverKey);
         return encryptor.decrypt(command.encrypted(), keyChain);
@@ -75,10 +84,14 @@ public class FileService {
     public DecryptResult downloadEncryptedFile(Long fileId, Member member) {
         FileMetadata metadata = fileMetadataRepository.getByIdAndMember(fileId, member);
         metadata.download(member);
+
         PersonalKey personalKey = personalKeyRepository.getByMember(member);
         KeyChain keyChain = new KeyChain(null, personalKey, null);
+
         byte[] encrypted = s3ApiClient.downloadByteFile(metadata.getEncryptedFileName());
+
         byte[] decryptUsingPersonalKey = encryptor.decrypt(encrypted, keyChain);
+
         memberRepository.save(member);
         fileMetadataRepository.save(metadata);
         return new DecryptResult(metadata, decryptUsingPersonalKey);
@@ -87,6 +100,7 @@ public class FileService {
     public void delete(Long fileId, Member member) {
         FileMetadata metadata = fileMetadataRepository.getByIdAndMember(fileId, member);
         metadata.delete(member);
+
         s3ApiClient.deleteFile(metadata.getEncryptedFileName());
         fileMetadataRepository.delete(metadata);
         memberRepository.save(member);
